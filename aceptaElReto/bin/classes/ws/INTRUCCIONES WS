@@ -1,0 +1,39 @@
+USO DEL WS
+
+Como vemos, el WS tiene varias clases, pero se ha intentado abstraer lo mas
+posible de modo que el uso en la interfaz sea con 2 o 3 clases como maximo
+y metodos con nombres de lo mas descriptivos posibles.
+
+La clase mas importante es el CallerWS, como su nombre indica es el encargado
+de llamar al Servicio Web, tiene como atributos un WebServiceTask y un WSQuery, 
+simplemente editaremos el WSQuery que pose de manera que generemos la url que
+queremos enviar, ademas si hacemos POST debemos rellenar los arrays 
+
+
+		private ArrayList<String> paramsNames;
+		private ArrayList<String> paramsValues;
+
+
+Para introducir las variables que queramos con un orden.
+
+En el caso del PUT, tendremos que dar valor a los atributos 
+
+		private String fileLocal;
+		private String fileWS;
+		
+con el path del archivo que queramos en Local y em WS.
+
+Despues haremos la llamada que corresponda con los metodos del caller WS:
+
+		public String getCall(Activity frag)
+		public String postCall(Activity frag)
+		public String utCall(Activity frag)
+
+Recibiremos la respuesta ya en JSON o XML y la trataremos con la Clase Traductor
+dependiendo de lo que esperemos obtener.
+
+
+
+
+	
+	
