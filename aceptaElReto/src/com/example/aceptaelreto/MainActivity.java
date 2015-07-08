@@ -2,7 +2,9 @@ package com.example.aceptaelreto;
 
 import java.util.ArrayList;
 
+import ws.CallerWS;
 import ws.Traductor;
+import ws.WSquery;
 import android.app.Activity;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
@@ -26,6 +28,7 @@ import android.widget.GridView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+
 public class MainActivity extends ActionBarActivity implements
 		NavigationDrawerFragment.NavigationDrawerCallbacks {
 
@@ -47,6 +50,17 @@ public class MainActivity extends ActionBarActivity implements
      ListView drawerList;
      GridView tablaPerfil;
      String Token;
+     String path;
+     
+     //Problemas prueba
+   //the images to display
+     Integer[] imageIDs = {
+     R.drawable.problem1,
+     R.drawable.problem2,
+     };
+    
+        
+     
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -56,16 +70,26 @@ public class MainActivity extends ActionBarActivity implements
 		// Set up the drawer.
 		mNavigationDrawerFragment.setUp(R.id.navigation_drawer,(DrawerLayout) findViewById(R.id.drawer_layout));
 		
+		//Imagen
+		
+		
+		
+		//fImagen
+		
 		try {
 			Intent myIntent = getIntent(); 
 			String login = (String) myIntent.getExtras().get("LoginResponse");
 			Traductor trad = new Traductor(login);
 			this.Token= trad.getSession().token;
+			
+			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
+	
+
 
 	@Override
 	public void onNavigationDrawerItemSelected(int position) {
@@ -79,22 +103,26 @@ public class MainActivity extends ActionBarActivity implements
 		      break;
 		    case 2:
 		      fragmentManager.beginTransaction().replace(R.id.container,
-		      Layout2Fragment.newInstance(position + 1)).commit();
+		  	  PlaceholderFragment.newInstance(position + 1)).commit();
 		      break;
 		    case 3:
 		      fragmentManager.beginTransaction().replace(R.id.container,
-		      Layout3Fragment.newInstance(position + 1)).commit();
+		      Layout1Fragment.newInstance(position + 1)).commit();
 		      break;
 		    case 4:
 			  fragmentManager.beginTransaction().replace(R.id.container,
-			  Layout4Fragment.newInstance(position + 1)).commit();
+			  Layout3Fragment.newInstance(position + 1)).commit();
 			  break;
 		    case 5:
 			  fragmentManager.beginTransaction().replace(R.id.container,
-			  Layout5Fragment.newInstance(position + 1)).commit();
+			  Layout4Fragment.newInstance(position + 1)).commit();
 			  break;
 		    case 6:
 			  fragmentManager.beginTransaction().replace(R.id.container,
+			  Layout5Fragment.newInstance(position + 1)).commit();
+			  break;
+		    case 7:
+		      fragmentManager.beginTransaction().replace(R.id.container,
 			  Layout6Fragment.newInstance(position + 1)).commit();
 			  break;
 		  }
@@ -105,22 +133,25 @@ public class MainActivity extends ActionBarActivity implements
 		switch (number) {
 		
 		case 1:
-			mTitle = getString(R.string.title_section1);
+			mTitle = getString(R.string.title_section0);
 			break;
 		case 2:
-			mTitle = getString(R.string.title_section2);
+			mTitle = getString(R.string.title_section1);
 			break;
 		case 3:
-			mTitle = getString(R.string.title_section3);
+			mTitle = getString(R.string.title_section2);
 			break;
 			//AÑADIDO NUEVOS APARTADOS DE MENU
 		case 4:
-			mTitle = getString(R.string.title_section4);
+			mTitle = getString(R.string.title_section3);
 			break;
 		case 5:
-			mTitle = getString(R.string.title_section5);
+			mTitle = getString(R.string.title_section4);
 			break;
 		case 6:
+			mTitle = getString(R.string.title_section5);
+			break;
+		case 7:
 			mTitle = getString(R.string.title_section6);
 			break;
 		}
@@ -166,6 +197,12 @@ public class MainActivity extends ActionBarActivity implements
 		 * The fragment argument representing the section number for this
 		 * fragment.
 		 */
+		 //URL Perfil
+	     CallerWS perfil = new CallerWS();     
+	     WSquery pf = perfil.getPath();
+	     String query = pf.addID(50);
+	     String repuesta = perfil.getCall(getActivity());
+		
 		
 		private static final String ARG_SECTION_NUMBER = "section_number";
 		

@@ -54,8 +54,8 @@ public class WSquery {
 	public void addType(type tipo){
 		this.query=this.query+tipo.toString()+"/";
 	}
-	public void addID(int id){
-		this.query=this.query+Integer.toString(id)+"/";
+	public String addID(int id){
+		return this.query=this.query+Integer.toString(id)+"/";
 	}
 	public void addStartSize(int start, int size){
 		this.query=this.query+this.str+Integer.toString(start)+this.size+Integer.toString(size)+"/";
