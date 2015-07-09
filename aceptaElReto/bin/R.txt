@@ -351,13 +351,21 @@ int id action_bar_spinner 0x7f090002
 int id action_bar_subtitle 0x7f09001f
 int id action_bar_title 0x7f09001e
 int id action_context_bar 0x7f090032
+<<<<<<< HEAD
 int id action_example 0x7f090056
+=======
+int id action_example 0x7f090054
+>>>>>>> jafroch/master
 int id action_menu_divider 0x7f090005
 int id action_menu_presenter 0x7f090006
 int id action_mode_bar 0x7f09002e
 int id action_mode_bar_stub 0x7f09002d
 int id action_mode_close_button 0x7f090020
+<<<<<<< HEAD
 int id action_settings 0x7f090055
+=======
+int id action_settings 0x7f090053
+>>>>>>> jafroch/master
 int id activity_chooser_view_content 0x7f090021
 int id always 0x7f090014
 int id beginning 0x7f09001b
@@ -380,9 +388,14 @@ int id email_sign_in_button 0x7f090045
 int id end 0x7f09001c
 int id expand_activities_button 0x7f090022
 int id expanded_menu 0x7f090028
+<<<<<<< HEAD
 int id fragment_listado 0x7f090053
 int id gallery1 0x7f090049
 int id gridView1 0x7f090051
+=======
+int id fragment_listado 0x7f090051
+int id gridView1 0x7f09004f
+>>>>>>> jafroch/master
 int id home 0x7f090000
 int id homeAsUp 0x7f09000e
 int id icon 0x7f090026
@@ -423,8 +436,13 @@ int id showTitle 0x7f090012
 int id split_action_bar 0x7f090004
 int id submit_area 0x7f09003c
 int id tabMode 0x7f09000c
+<<<<<<< HEAD
 int id tabla 0x7f09004f
 int id textView 0x7f090054
+=======
+int id tabla 0x7f09004d
+int id textView 0x7f090052
+>>>>>>> jafroch/master
 int id title 0x7f090027
 int id up 0x7f090001
 int id useLogo 0x7f090013

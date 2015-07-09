@@ -5,6 +5,10 @@ import java.util.ArrayList;
 import ws.CallerWS;
 import ws.Traductor;
 import ws.WSquery;
+<<<<<<< HEAD
+=======
+import acr.estructuras.NewSession;
+>>>>>>> jafroch/master
 import android.app.Activity;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
@@ -50,7 +54,11 @@ public class MainActivity extends ActionBarActivity implements
      ListView drawerList;
      GridView tablaPerfil;
      String Token;
+<<<<<<< HEAD
      String path;
+=======
+     
+>>>>>>> jafroch/master
      
      //Problemas prueba
    //the images to display
@@ -81,7 +89,11 @@ public class MainActivity extends ActionBarActivity implements
 			String login = (String) myIntent.getExtras().get("LoginResponse");
 			Traductor trad = new Traductor(login);
 			this.Token= trad.getSession().token;
+<<<<<<< HEAD
 			
+=======
+						
+>>>>>>> jafroch/master
 			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -163,7 +175,7 @@ public class MainActivity extends ActionBarActivity implements
 		actionBar.setDisplayShowTitleEnabled(true);
 		actionBar.setTitle(mTitle);
 	}
-
+	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		if (!mNavigationDrawerFragment.isDrawerOpen()) {
@@ -188,6 +200,7 @@ public class MainActivity extends ActionBarActivity implements
 		}
 		return super.onOptionsItemSelected(item);
 	}
+	
 
 	/**
 	 * A placeholder fragment containing a simple view.
@@ -203,6 +216,22 @@ public class MainActivity extends ActionBarActivity implements
 	     String query = pf.addID(50);
 	     String repuesta = perfil.getCall(getActivity());
 		
+		
+		 //URL Perfil
+	     CallerWS perfil = new CallerWS();     
+	     WSquery pf = perfil.getPath();
+	     String path;
+	     String[] opcperfil;
+	     
+	     String query = pf.addID(50);
+	     String respuesta = perfil.getCall(getActivity());
+	     Traductor trad = new Traductor(respuesta);
+		 this.Token= trad.getSession().token;
+		 opcperfil[0] = String.valueOf(trad.getSession().id);
+	 	 opcperfil[1] = trad.getSession().nick;
+		 opcperfil[2] = trad.getSession().name;
+		 opcperfil[3] = "";
+		 opcperfil[4] = ""; 
 		
 		private static final String ARG_SECTION_NUMBER = "section_number";
 		
@@ -253,11 +282,13 @@ class VivzAdapter extends BaseAdapter{
 		this.values=new ArrayList<String>();
 		this.mContext=context;
 		Resources res = context.getResources();
+		
 		String[] temp = res.getStringArray(R.array.perfil_atb);	
 		for(int i=0;i<temp.length;i++){
 			this.atb.add(temp[i]);
 		}
-		temp = res.getStringArray(R.array.perfil_atb_values);	
+		temp = res.getStringArray(R.array.perfil_atb);	
+		//temp = MainActivity.opcperfil;
 		for(int i=0;i<temp.length;i++){
 			this.values.add(temp[i]);
 		}
