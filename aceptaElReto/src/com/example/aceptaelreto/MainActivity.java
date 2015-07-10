@@ -2,9 +2,12 @@ package com.example.aceptaelreto;
 
 import java.util.ArrayList;
 
+import com.example.aceptaelreto.MainActivity.PlaceholderFragment;
+
 import ws.CallerWS;
 import ws.Traductor;
 import ws.WSquery;
+import ws.WSquery.type;
 import android.app.Activity;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
@@ -15,6 +18,7 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -49,7 +53,7 @@ public class MainActivity extends ActionBarActivity implements
      DrawerLayout drawerLayout;
      ListView drawerList;
      GridView tablaPerfil;
-     String Token;
+     public String Token;
      
      //Problemas prueba
    //the images to display
@@ -58,7 +62,9 @@ public class MainActivity extends ActionBarActivity implements
      R.drawable.problem2,
      };
     
-        
+ 
+     public static String[] opcperfil = new String[5];    
+   
      
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -80,7 +86,25 @@ public class MainActivity extends ActionBarActivity implements
 			String login = (String) myIntent.getExtras().get("LoginResponse");
 			Traductor trad = new Traductor(login);
 			this.Token= trad.getSession().token;
-
+			
+			//--------------------------------------------------------------------------------------------------------------
+		  
+				//URL Perfil
+			 	CallerWS perfil = new CallerWS();     
+			 	WSquery query = perfil.getPath();
+		       query.addType(type.user);
+		       query.addID(50);
+			   String respuesta = perfil.getCall(this);
+			   Traductor tradu = new Traductor(respuesta);
+			     
+			   opcperfil[0] = String.valueOf(trad.getUser().id);
+			   opcperfil[1] = tradu.getUser().nick;
+			   opcperfil[2] = tradu.getUser().name;
+			   opcperfil[3] = tradu.getUser().country.name;
+			   opcperfil[4] = query.getQuery();       
+			   Log.i("Ayuda",respuesta);
+		   	 //----------------------------------------------------------------------------------------------------------------
+			
 			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -88,7 +112,6 @@ public class MainActivity extends ActionBarActivity implements
 		}
 	}
 	
-
 
 	@Override
 	public void onNavigationDrawerItemSelected(int position) {
@@ -102,7 +125,7 @@ public class MainActivity extends ActionBarActivity implements
 		      break;
 		    case 2:
 		      fragmentManager.beginTransaction().replace(R.id.container,
-		  	  PlaceholderFragment.newInstance(position + 1)).commit();
+		  	  Perfil_Fragment.newInstance(position + 1)).commit();
 		      break;
 		    case 3:
 		      fragmentManager.beginTransaction().replace(R.id.container,
@@ -197,21 +220,8 @@ public class MainActivity extends ActionBarActivity implements
 		 * The fragment argument representing the section number for this
 		 * fragment.
 		 */		
-		 //URL Perfil
-	     CallerWS perfil = new CallerWS();     
-	     WSquery pf = perfil.getPath();
-	     String path;
-	     String[] opcperfil;
-	     
-	     String query = pf.addID(50);
-	     String respuesta = perfil.getCall(getActivity());
-	     Traductor trad = new Traductor(respuesta);
-	     /*
-		 opcperfil[0] = String.valueOf(trad.getSession().id);
-	 	 opcperfil[1] = trad.getSession().nick;
-		 opcperfil[2] = trad.getSession().name;
-		 opcperfil[3] = "";
-		 opcperfil[4] = ""; */
+		
+		
 		
 		private static final String ARG_SECTION_NUMBER = "section_number";
 		
@@ -225,6 +235,10 @@ public class MainActivity extends ActionBarActivity implements
 			args.putInt(ARG_SECTION_NUMBER, sectionNumber);
 			fragment.setArguments(args);
 			return fragment;
+			
+			
+			
+			
 		}
 
 		public PlaceholderFragment() {
@@ -236,8 +250,10 @@ public class MainActivity extends ActionBarActivity implements
 				Bundle savedInstanceState) {
 			View rootView = inflater.inflate(R.layout.fragment_main, container,
 					false);
+			
+			
 			tablaPerfil=(GridView) rootView.findViewById(R.id.gridView1);
-			tablaPerfil.setAdapter(new VivzAdapter(getActivity().getApplicationContext()));
+			tablaPerfil.setAdapter(new VivzAdapter(getActivity().getApplicationContext(), MainActivity.opcperfil));
 			
 			return rootView;
 		}
@@ -251,24 +267,29 @@ public class MainActivity extends ActionBarActivity implements
 	}
 
 }
+
 class VivzAdapter extends BaseAdapter{
 	ArrayList<String> atb;
 	ArrayList<String> values;
 	Context mContext;
 	
-	public VivzAdapter(Context context) {
+	
+	
+	public VivzAdapter(Context context, String[] opcperfil) {
 		// TODO Auto-generated constructor stub
 		this.atb=new ArrayList<String>();
 		this.values=new ArrayList<String>();
 		this.mContext=context;
 		Resources res = context.getResources();
 		
+		
+		
 		String[] temp = res.getStringArray(R.array.perfil_atb);	
 		for(int i=0;i<temp.length;i++){
 			this.atb.add(temp[i]);
 		}
-		temp = res.getStringArray(R.array.perfil_atb);	
-		//temp = MainActivity.opcperfil;
+		//temp = res.getStringArray(R.array.perfil_atb);	
+		temp = opcperfil;
 		for(int i=0;i<temp.length;i++){
 			this.values.add(temp[i]);
 		}

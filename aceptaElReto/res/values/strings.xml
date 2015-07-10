@@ -30,5 +30,7 @@
     </string-array>
     <string name="id">Id</string>  
     <string name="valor">Valor</string>
+    <string name="AER">Acepta el Reto</string>
+    <string name="registrate">¡Registrate!</string>
 
 </resources>

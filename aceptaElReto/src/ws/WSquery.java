@@ -51,11 +51,12 @@ public class WSquery {
 		this.paramsValues= new ArrayList<String>();
 		this.query=this.url;
 	}
+
 	public void addType(type tipo){
 		this.query=this.query+tipo.toString()+"/";
 	}
-	public String addID(int id){
-		return this.query=this.query+Integer.toString(id)+"/";
+	public void addID(int id){
+		this.query=this.query+Integer.toString(id)+"/";
 	}
 	public void addStartSize(int start, int size){
 		this.query=this.query+this.str+Integer.toString(start)+this.size+Integer.toString(size)+"/";
