@@ -1,5 +1,7 @@
 package com.example.aceptaelreto;
 
+import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
 
 import com.example.aceptaelreto.MainActivity.PlaceholderFragment;
@@ -16,6 +18,7 @@ import android.support.v4.app.FragmentManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -210,6 +213,7 @@ public class MainActivity extends ActionBarActivity implements
 		}
 		return super.onOptionsItemSelected(item);
 	}
+
 	
 
 	/**

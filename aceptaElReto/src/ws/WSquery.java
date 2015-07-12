@@ -51,7 +51,6 @@ public class WSquery {
 		this.paramsValues= new ArrayList<String>();
 		this.query=this.url;
 	}
-
 	public void addType(type tipo){
 		this.query=this.query+tipo.toString()+"/";
 	}
@@ -80,7 +79,6 @@ public class WSquery {
 		this.paramsNames.add(name);
 		this.paramsValues.add(value);
 	}
-	
 	public ArrayList<String> getParamsNames(){
 		return this.paramsNames;
 	}

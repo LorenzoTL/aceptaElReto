@@ -1,5 +1,9 @@
 package com.example.aceptaelreto;
 
+
+
+import java.io.InputStream;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -7,9 +11,22 @@ import ws.CallerWS;
 import ws.Traductor;
 import ws.WSquery;
 import ws.WSquery.type;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.ImageLoader;
+import com.android.volley.toolbox.NetworkImageView;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+
+
+
 import acr.estructuras.UserWSType;
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -17,8 +34,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
 
 public class Perfil_Fragment extends Fragment{
 	
@@ -35,6 +54,7 @@ public class Perfil_Fragment extends Fragment{
 	private TextView txtPais;
 	private TextView txtInstitucion;
 	private Button btnEditProfile;
+	private NetworkImageView img;
 	
     public static Perfil_Fragment newInstance(int sectionNumber) {
         Perfil_Fragment fragment = new Perfil_Fragment();
@@ -61,7 +81,9 @@ public class Perfil_Fragment extends Fragment{
 		txtGenero = (TextView)rootView.findViewById(R.id.txtGenero);
 		txtPais = (TextView)rootView.findViewById(R.id.txtPais);
 		txtInstitucion = (TextView)rootView.findViewById(R.id.txtInstitucion);
-		btnEditProfile = (Button)rootView.findViewById(R.id.btnEditProfile);
+		img = (NetworkImageView)rootView.findViewById(R.id.avatar);
+		
+		//btnEditProfile = (Button)rootView.findViewById(R.id.btnEditProfile);
 		/*btnEditProfile.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -99,18 +121,41 @@ public class Perfil_Fragment extends Fragment{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		/*
-		String DATE_FORMAT = "dd/MM/yyyy";
-		Date date = perfil.birthday;
-		SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
-		this.txtNacimiento.setText(sdf.format(date));*/
-		this.txtNick.setText(perfil.nick);
-		//this.txtCorreo.setText(perfil.email);
-		this.txtNombreCompleto.setText(perfil.name);
-		//this.txtGenero.setText(perfil.gender.name());
-		this.txtPais.setText(perfil.country.name);
-		//this.txtInstitucion.setText(perfil.institution);
 		
+		/*
+		if (perfil.role.name()!=null){
+			String DATE_FORMAT = "dd/MM/yyyy";
+			Date date = perfil.birthday;
+			SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
+			this.txtNacimiento.setText(sdf.format(date));
+			this.txtCorreo.setText("Correo: "+perfil.email);
+		}
+		else{
+			this.txtNacimiento.setText(" ");
+			this.txtCorreo.setText(" ");
+		}*/
+		RequestQueue requestQueueImagen = Volley.newRequestQueue(getActivity().getApplicationContext());
+		ImageLoader imageLoader = new ImageLoader(requestQueueImagen, new BitmapLRUCache());
+		img.setImageUrl(perfil.avatar, imageLoader);
+		this.txtNacimiento.setText("Fecha de Nacimiento: ");
+		this.txtCorreo.setText("Correo: ");
+		this.txtGenero.setText("Género: ");
+		this.txtNick.setText("Nick: "+perfil.nick);	
+		this.txtNombreCompleto.setText("Nombre: "+perfil.name);
+		//this.txtGenero.setText("Genero: "+perfil.gender.name());
+		this.txtPais.setText("País: "+perfil.country.name);
+		this.txtInstitucion.setText("Institución: "+perfil.institution.name);
+		
+	}
+	
+	public static Drawable LoadImageFromWebOperations(String url) {
+	    try {
+	        InputStream is = (InputStream) new URL(url).getContent();
+	        Drawable d = Drawable.createFromStream(is, "src name");
+	        return d;
+	    } catch (Exception e) {
+	        return null;
+	    }
 	}
 
 }
