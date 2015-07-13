@@ -90,24 +90,6 @@ public class MainActivity extends ActionBarActivity implements
 			Traductor trad = new Traductor(login);
 			this.Token= trad.getSession().token;
 			
-			//--------------------------------------------------------------------------------------------------------------
-		  
-				//URL Perfil
-			 	CallerWS perfil = new CallerWS();     
-			 	WSquery query = perfil.getPath();
-		       query.addType(type.user);
-		       query.addID(50);
-			   String respuesta = perfil.getCall(this);
-			   Traductor tradu = new Traductor(respuesta);
-			     
-			   opcperfil[0] = String.valueOf(trad.getUser().id);
-			   opcperfil[1] = tradu.getUser().nick;
-			   opcperfil[2] = tradu.getUser().name;
-			   opcperfil[3] = tradu.getUser().country.name;
-			   opcperfil[4] = query.getQuery();       
-			   Log.i("Ayuda",respuesta);
-		   	 //----------------------------------------------------------------------------------------------------------------
-			
 			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -132,7 +114,7 @@ public class MainActivity extends ActionBarActivity implements
 		      break;
 		    case 3:
 		      fragmentManager.beginTransaction().replace(R.id.container,
-		      Layout1Fragment.newInstance(position + 1)).commit();
+		      Inicio_Fragment.newInstance(position + 1)).commit();
 		      break;
 		    case 4:
 			  fragmentManager.beginTransaction().replace(R.id.container,
