@@ -81,7 +81,7 @@
         android:textSize="18sp"
         android:layout_centerHorizontal="true"
         android:textColor="@color/black" />
-    <!--  
+      
     <Button
         android:id="@+id/btnEditProfile"
         android:layout_width="20dp"
@@ -90,6 +90,6 @@
         android:visibility="visible"
         android:layout_alignParentTop="true"
         android:layout_alignParentRight="true" />
-	-->
+	
     
 </RelativeLayout>

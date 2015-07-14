@@ -57,6 +57,8 @@ public class MainActivity extends ActionBarActivity implements
      ListView drawerList;
      GridView tablaPerfil;
      public String Token;
+     public static String myId;
+     Bundle args;
      
      //Problemas prueba
    //the images to display
@@ -89,6 +91,8 @@ public class MainActivity extends ActionBarActivity implements
 			String login = (String) myIntent.getExtras().get("LoginResponse");
 			Traductor trad = new Traductor(login);
 			this.Token= trad.getSession().token;
+			args = new Bundle();
+			args.putString("TOKEN",Token);
 			
 			
 		} catch (Exception e) {
@@ -97,7 +101,6 @@ public class MainActivity extends ActionBarActivity implements
 		}
 	}
 	
-
 	@Override
 	public void onNavigationDrawerItemSelected(int position) {
 		  // update the main content by replacing fragments
@@ -109,8 +112,10 @@ public class MainActivity extends ActionBarActivity implements
 		      PlaceholderFragment.newInstance(position + 1)).commit();
 		      break;
 		    case 2:
-		      fragmentManager.beginTransaction().replace(R.id.container,
-		  	  Perfil_Fragment.newInstance(position + 1)).commit();
+		      Fragment profile = new Perfil_Fragment().newInstance(position + 1);
+		      profile.setArguments(args);
+		      fragmentManager.beginTransaction().add(R.id.container,
+		  	  profile).commit();
 		      break;
 		    case 3:
 		      fragmentManager.beginTransaction().replace(R.id.container,

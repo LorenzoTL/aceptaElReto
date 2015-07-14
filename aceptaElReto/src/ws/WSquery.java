@@ -43,6 +43,7 @@ public class WSquery {
 		submission,
 		user,
 		volume,
+		currentuser,
 	}
 	
 	public WSquery() {
