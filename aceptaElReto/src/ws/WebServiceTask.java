@@ -9,7 +9,8 @@ import java.io.InputStreamReader;
 import java.net.URI;
 import java.util.ArrayList;
 
-import javax.ws.rs.core.Cookie;
+
+
 
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -31,12 +32,13 @@ import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.entity.InputStreamEntity;
 
+
+
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
-import android.webkit.CookieManager;
-import android.webkit.CookieSyncManager;
+
 
 
 
@@ -58,6 +60,9 @@ public class WebServiceTask extends AsyncTask<String, Integer, String> {
     private String processMessage = "Processing...";
     private ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
     private ProgressDialog pDlg = null;
+    
+    private String Domain="acr2.programame.com";
+    private String path = "/";
     
     private HttpContext localContext=null;
     private CookieStore cookieStore;
@@ -152,12 +157,14 @@ public class WebServiceTask extends AsyncTask<String, Integer, String> {
         // Bind custom cookie store to the local context
         //localContext.setAttribute(ClientContext.COOKIE_STORE, cookieStore); 
         //CookieManager cookieManager= CookieManager.getInstance();
-        this.getLocalContext();
-       
-      
-        this.cookieStore.addCookie(new BasicClientCookie("acrsession", this.token));
+        this.localContext=this.getLocalContext();
+        BasicClientCookie cookie = new BasicClientCookie("acrsession", this.token);
+        cookie.setDomain(this.Domain);
+        cookie.setPath(this.path);
+        this.cookieStore.addCookie(cookie);
+        localContext.setAttribute(ClientContext.COOKIE_STORE, this.cookieStore);
      
-        HttpResponse response = null;        
+        HttpResponse response = null; 
         try {
             switch (taskType) {
 
@@ -232,10 +239,7 @@ public class WebServiceTask extends AsyncTask<String, Integer, String> {
         {
             localContext = new BasicHttpContext();
             cookieStore = new BasicCookieStore();
-            localContext.setAttribute(ClientContext.COOKIE_ORIGIN, cookieStore);
-            localContext.setAttribute(ClientContext.COOKIE_SPEC, cookieStore);
-            localContext.setAttribute(ClientContext.COOKIESPEC_REGISTRY, cookieStore);
-            localContext.setAttribute(ClientContext.COOKIE_STORE, cookieStore);  // to make sure that cookies provided by the server can be reused
+            localContext.setAttribute(ClientContext.COOKIE_STORE, cookieStore);// to make sure that cookies provided by the server can be reused
         }
         return localContext;
     }

@@ -58,10 +58,11 @@ public class Perfil_Fragment extends Fragment{
 	private NetworkImageView img;
 	private Bundle token;
 	
-    public static Perfil_Fragment newInstance(int sectionNumber) {
+    public static Perfil_Fragment newInstance(int sectionNumber, String tk) {
         Perfil_Fragment fragment = new Perfil_Fragment();
         Bundle args = new Bundle();
         args.putInt(ARG_SECTION_NUMBER, sectionNumber);
+        args.putString("TOKEN", tk);
         fragment.setArguments(args);
         return fragment;
     }
@@ -124,25 +125,18 @@ public class Perfil_Fragment extends Fragment{
 			e.printStackTrace();
 		}
 		
-		/* Problema con quedarme logueado mientras
 		
-			String DATE_FORMAT = "dd/MM/yyyy";
-			Date date = perfil.birthday;
-			SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
-			this.txtNacimiento.setText(sdf.format(date));
-			this.txtCorreo.setText("Correo: "+perfil.email);
-		
-			this.txtNacimiento.setText(" ");
-			this.txtCorreo.setText(" ");
-		*/
+		String DATE_FORMAT = "dd/MM/yyyy";
+		Date date = perfil.birthday;
+		SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
+		this.txtNacimiento.setText("Fecha de Nacimiento: "+sdf.format(date));	
 		RequestQueue requestQueueImagen = Volley.newRequestQueue(getActivity().getApplicationContext());
 		ImageLoader imageLoader = new ImageLoader(requestQueueImagen, new BitmapLRUCache());
-		img.setImageUrl(perfil.avatar, imageLoader);
-		this.txtNacimiento.setText("Fecha de Nacimiento: ");
+		img.setImageUrl(perfil.avatar, imageLoader); 	
 		this.txtCorreo.setText("Correo: "+perfil.email);
 		this.txtNick.setText("Nick: "+perfil.nick);	
 		this.txtNombreCompleto.setText("Nombre: "+perfil.name);
-		//this.txtGenero.setText("Genero: "+perfil.gender);
+		this.txtGenero.setText("Genero: "+perfil.gender);
 		this.txtPais.setText("País: "+perfil.country.name);
 		this.txtInstitucion.setText("Institución: "+perfil.institution.name);
 		

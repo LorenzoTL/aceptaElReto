@@ -14,22 +14,65 @@
     <string name="action_example">Example action</string>
     <string name="action_settings">Settings</string>
     <string name="description_image_profile">Imagen del Usuario</string>
+	<string name="action_clear">Limpiar</string>
+    
     <string-array name="perfil_atb">
         <item>Id</item>
         <item>Nick</item>
         <item>Nombre</item>
         <item>País</item>
-        <item>Institución</item>  
+        <item>Institución</item>
     </string-array>
+    
+    <string-array name="list_prob">
+        <item>Volúmenes</item>
+        <item>Categorías</item>
+    </string-array>
+    	
+    <string-array name="list_prob1">
+        <item>Intervalo de problemas: [100 199]</item>
+		<item>Intervalo de problemas: [200 299]</item>
+    </string-array>
+    
+    <string-array name="list_prob2">
+        <item>Programación</item>
+		<item>Exámenes</item>
+		<item>Consursos</item>
+		<item>Temática</item>
+		<item>Recopilaciones</item>
+    </string-array>
+    
+    <string-array name="list_prob21">
+        <item>Construcciones de programación</item>
+		<item>Estructuras de datos</item>
+		<item>Algoritmia</item>
+		<item>Matemáticas</item>
+		<item>Grafos</item>
+		<item>Geometría</item>
+    </string-array>
+    
     <string-array name="buscar_opc">
         <item>Problema</item>
         <item>Usuario</item>
     </string-array>
-    <string name="id">Id</string>  
+
+    <string name="id">Id</string>
     <string name="valor">Valor</string>
     <string name="AER">Acepta el Reto</string>
     <string name="registrate">¡Registrate!</string>
     <string name="buscarId">Id Problema o Usuario</string>
     <string name="buscar">Buscar</string>
+    <string name="comentario">Comentario de este envío (opcional)</string>
+    <string name="ChooseFile">Choose File</string>
 
+    <string-array name="lenguaje_opc">
+        <item>C</item>
+        <item>C++</item>
+        <item>Java</item>
+    </string-array>
+
+    <string name="Enviar">Enviar</string>
+    <string name="title_activity_problems">ProblemsActivity</string>
+    <string name="hello_world">Hello world!</string>
+	
 </resources>
