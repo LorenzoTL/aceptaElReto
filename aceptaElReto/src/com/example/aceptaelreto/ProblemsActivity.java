@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import ws.CallerWS;
 import ws.WSquery;
-import extras.*;
 import android.app.Activity;
 import android.content.res.Resources;
 import android.os.Bundle;

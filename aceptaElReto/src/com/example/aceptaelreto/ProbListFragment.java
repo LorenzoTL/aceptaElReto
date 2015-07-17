@@ -7,7 +7,6 @@ import ws.CallerWS;
 import ws.Traductor;
 import ws.WSquery;
 import ws.WSquery.type;
-import extras.MyArrayAdapter;
 import acr.estructuras.CategoryWSType;
 import acr.estructuras.ListWSType;
 import acr.estructuras.ProblemDetailsList;
@@ -39,7 +38,7 @@ public class ProbListFragment extends Fragment implements AdapterView.OnItemClic
     
     ArrayAdapter adapter;
     ArrayList<String> etiq = new ArrayList<String>();
-    Integer[] ids;
+    int[] ids = new int[10];
     TextView pb;
     private CallerWS ws;
     private WSquery path;
@@ -94,26 +93,44 @@ public class ProbListFragment extends Fragment implements AdapterView.OnItemClic
     	this.ws.setPath(path);
     	String respuesta = ws.getCall(getActivity(),token.getString("TOKEN"));
     	Traductor tradu = new Traductor(respuesta);
-    	CategoryWSType perfil = null;
+    	ArrayList<CategoryWSType> listCat = null;
+    	CategoryWSType cat = null;
+    	
     	try{
-    		perfil = tradu.getCategoria();		
+    		if (tradu.getJSON().startsWith("{"+"subcats")) listCat = tradu.getCategorias();
+    		else cat = tradu.getCategoria();
     	} catch (Exception e) {
     		// TODO Auto-generated catch block
     		e.printStackTrace();
     	}
-    	ListWSType<CategoryWSType> listaSubC = (ListWSType<CategoryWSType>) perfil.subcats;
-    	if (listaSubC != null){
+    	
+    	if (listCat != null){
     		
     		CategoryWSType aux = null;
-        	for(int i=0;i<listaSubC.size();i++){
-        		aux = listaSubC.get(i);
+        	for(int i=0;i<listCat.size();i++){
+        		aux = listCat.get(i);
         		this.etiq.add(aux.name);
         		ids[i]=aux.id;
         	}	
         	
-    	}else{ //Lista de problemas
-    		getListaProblemas();
     	}
+    	
+    	if (cat != null){
+    		ArrayList<CategoryWSType> auxLista = (ArrayList<CategoryWSType>) cat.subcats;
+    		if (auxLista == null){
+        		this.etiq.add(cat.name);
+        		ids[0]=cat.id;
+    		}else{
+    			CategoryWSType aux = null;
+    			for(int i=0;i<auxLista.size();i++){
+            		aux = auxLista.get(i);
+            		this.etiq.add(aux.name);
+            		ids[i]=aux.id;
+    			}
+    		}
+    	}
+    	if (listCat==null && cat==null) getListaProblemas();
+    	
     	    	
 		
         if (click == 0){
@@ -133,16 +150,16 @@ public class ProbListFragment extends Fragment implements AdapterView.OnItemClic
 		this.ws.setPath(path);
     	String respuesta = ws.getCall(getActivity(),token.getString("TOKEN"));
 		Traductor tradu = new Traductor(respuesta);
-    	ArrayList<ProblemWSType> perfil = null;
+    	ArrayList<ProblemWSType> listCat = null;
     	try{
-    		perfil = tradu.getProblemas();		
+    		listCat = tradu.getProblemas();		
     	} catch (Exception e) {
     		// TODO Auto-generated catch block
     		e.printStackTrace();
     	}
     	
-    	for(int i=0;i<perfil.size();i++){
-    		this.etiq.add(perfil.get(i).title);
+    	for(int i=0;i<listCat.size();i++){
+    		this.etiq.add(listCat.get(i).title);
     	}	
     	adapter.notifyDataSetChanged();
 		
@@ -153,6 +170,7 @@ public class ProbListFragment extends Fragment implements AdapterView.OnItemClic
 
     	String aux = (String) adapter.getItem(position);
     	adapter.clear();
+    	path.cleanQuery();
     	setLista(ids[position]);
     	
     	// Falta terminar el resto

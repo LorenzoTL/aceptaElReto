@@ -162,7 +162,7 @@ public class Traductor {
 		try {
 			jsonobject = new JSONObject(this.JSON);
 			//ponemos country ya que el obj tiene un campo que es la lista de elems llamado country.
-			jsonArray = jsonobject.getJSONArray("country");
+			jsonArray = jsonobject.getJSONArray("subcats");
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

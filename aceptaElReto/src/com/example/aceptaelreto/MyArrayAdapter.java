@@ -1,4 +1,4 @@
-package extras;
+package com.example.aceptaelreto;
 
 import android.content.Context;
 import android.view.LayoutInflater;

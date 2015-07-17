@@ -1,6 +1,8 @@
 package acr.estructuras;
 
 import java.util.List;
+
+import org.simpleframework.xml.Element;
 import org.simpleframework.xml.Root;
 
 /**
@@ -45,6 +47,7 @@ public class CategoryWSType {
 	public List<CategoryWSType> subcats;
 
 	/** Lista de problemas directamente pertenecientes a la categoría. */
+	@Element(name="problems", required = false)
 	public ProblemDetailsList problems;
 	
 	/** 
@@ -52,6 +55,7 @@ public class CategoryWSType {
 	 * El primer elemento es la categoría raíz. El último es la
 	 * categoría PADRE al objeto. Contienen únicamente id y name.
 	 */
+	@Element(name="path", required = false)
 	public List<CategoryWSType> path;
 	
 
