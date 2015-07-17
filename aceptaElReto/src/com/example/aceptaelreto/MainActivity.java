@@ -56,7 +56,7 @@ public class MainActivity extends ActionBarActivity implements
      DrawerLayout drawerLayout;
      ListView drawerList;
      GridView tablaPerfil;
-     public String Token;
+     public static String Token;
      public static String myId;
      Bundle args;
      
@@ -125,7 +125,7 @@ public class MainActivity extends ActionBarActivity implements
 			  break;
 		    case 5:
 			  fragmentManager.beginTransaction().replace(R.id.container,
-			  ProbListFragment.newInstance(position + 1)).commit();
+			  ProbListFragment.newInstance(position + 1,Token)).commit();
 			  break;
 		    case 6:
 			  fragmentManager.beginTransaction().replace(R.id.container,

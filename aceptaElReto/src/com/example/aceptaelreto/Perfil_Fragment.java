@@ -114,7 +114,6 @@ public class Perfil_Fragment extends Fragment{
 		
 		path.addType(type.currentuser);
 	    this.ws.setPath(path);
-	    String aux =token.getString("TOKEN");
 		String respuesta = ws.getCall(getActivity(),token.getString("TOKEN"));
 		Traductor tradu = new Traductor(respuesta);
 		UserWSType perfil = null;

@@ -3,7 +3,16 @@ package com.example.aceptaelreto;
 import java.util.ArrayList;
 import java.util.List;
 
+import ws.CallerWS;
+import ws.Traductor;
+import ws.WSquery;
+import ws.WSquery.type;
 import extras.MyArrayAdapter;
+import acr.estructuras.CategoryWSType;
+import acr.estructuras.ListWSType;
+import acr.estructuras.ProblemDetailsList;
+import acr.estructuras.ProblemWSType;
+import acr.estructuras.UserWSType;
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -30,13 +39,17 @@ public class ProbListFragment extends Fragment implements AdapterView.OnItemClic
     
     ArrayAdapter adapter;
     ArrayList<String> etiq = new ArrayList<String>();
+    Integer[] ids;
     TextView pb;
+    private CallerWS ws;
+    private WSquery path;
+    Bundle token;
     
-    
-    public static ProbListFragment newInstance(int sectionNumber) {
+    public static ProbListFragment newInstance(int sectionNumber, String tk) {
     	ProbListFragment fragment = new ProbListFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_SECTION_NUMBER, sectionNumber);
+        args.putString("TOKEN", tk);
         fragment.setArguments(args);
         return fragment;
     }
@@ -50,11 +63,12 @@ public class ProbListFragment extends Fragment implements AdapterView.OnItemClic
             Bundle savedInstanceState) {
     	
         View rootView = inflater.inflate(R.layout.lista_prob, container, false);
-        
+        token = this.getArguments();
         list = (ListView)rootView.findViewById(R.id.listap);
         pb = (TextView)rootView.findViewById(R.id.pb);
+        this.ws= new CallerWS();
+        path = this.ws.getPath();
         setLista(0);
-        
         return rootView;
     }
 
@@ -70,51 +84,76 @@ public class ProbListFragment extends Fragment implements AdapterView.OnItemClic
     	String[] temp = null;
     	Resources res = getActivity().getApplicationContext().getResources();
     	
-    	switch(click){
-    	case 0:
-    		temp = res.getStringArray(R.array.list_prob);
-    		break;
-    	case 2:
-    		temp = res.getStringArray(R.array.list_prob2);
-    		break;
-    	}	
+    	this.path.addType(type.cat);
     	
-		for(int i=0;i<temp.length;i++){
-			this.etiq.add(temp[i]);
-		}
+    	if (click != 0){
+    		path.addID(click);
+        	path.addNumSubCat(1);
+    	}
+
+    	this.ws.setPath(path);
+    	String respuesta = ws.getCall(getActivity(),token.getString("TOKEN"));
+    	Traductor tradu = new Traductor(respuesta);
+    	CategoryWSType perfil = null;
+    	try{
+    		perfil = tradu.getCategoria();		
+    	} catch (Exception e) {
+    		// TODO Auto-generated catch block
+    		e.printStackTrace();
+    	}
+    	ListWSType<CategoryWSType> listaSubC = (ListWSType<CategoryWSType>) perfil.subcats;
+    	if (listaSubC != null){
+    		
+    		CategoryWSType aux = null;
+        	for(int i=0;i<listaSubC.size();i++){
+        		aux = listaSubC.get(i);
+        		this.etiq.add(aux.name);
+        		ids[i]=aux.id;
+        	}	
+        	
+    	}else{ //Lista de problemas
+    		getListaProblemas();
+    	}
+    	    	
+		
         if (click == 0){
         	adapter = new MyArrayAdapter<String>(getActivity(),etiq);
         	list.setAdapter(adapter);
             list.setOnItemClickListener(this);
         }else adapter.notifyDataSetChanged();
-        
+     
         pb.setText("Buscar por: ");
     }
-
-
-    /*@Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if (id == R.id.action_clear) {
-
-            adapter.clear();
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }*/
+    
+    public void getListaProblemas(){
+		
+    	path.cleanQuery();
+		path.addType(type.cat);
+		path.addType(type.allproblems);
+		this.ws.setPath(path);
+    	String respuesta = ws.getCall(getActivity(),token.getString("TOKEN"));
+		Traductor tradu = new Traductor(respuesta);
+    	ArrayList<ProblemWSType> perfil = null;
+    	try{
+    		perfil = tradu.getProblemas();		
+    	} catch (Exception e) {
+    		// TODO Auto-generated catch block
+    		e.printStackTrace();
+    	}
+    	
+    	for(int i=0;i<perfil.size();i++){
+    		this.etiq.add(perfil.get(i).title);
+    	}	
+    	adapter.notifyDataSetChanged();
+		
+    }
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
     	String aux = (String) adapter.getItem(position);
     	adapter.clear();
-    	//if (aux.equals("Volúmenes")) lista de problemas;
-    	if (aux.equals("Categorías")) setLista(2);
-    	if (aux.equals("Programación")) setLista(21);
-    	if (aux.equals("Exámenes")) setLista(22);
-    	if (aux.equals("Concursos")) setLista(23);
-    	if (aux.equals("Temática")) setLista(24);
-    	if (aux.equals("Recopilaciones")) setLista(25);
+    	setLista(ids[position]);
     	
     	// Falta terminar el resto
     	

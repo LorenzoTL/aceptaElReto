@@ -101,4 +101,7 @@ public class WSquery {
 	public String getFileWS(){
 		return this.fileWS;
 	}
+	public void cleanQuery(){
+		this.query=this.url; 
+	}
 }
