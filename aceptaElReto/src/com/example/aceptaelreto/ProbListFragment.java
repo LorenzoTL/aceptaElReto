@@ -93,44 +93,31 @@ public class ProbListFragment extends Fragment implements AdapterView.OnItemClic
     	this.ws.setPath(path);
     	String respuesta = ws.getCall(getActivity(),token.getString("TOKEN"));
     	Traductor tradu = new Traductor(respuesta);
-    	ArrayList<CategoryWSType> listCat = null;
+    	ArrayList<CategoryWSType> arrayCat = null;
     	CategoryWSType cat = null;
     	
     	try{
-    		if (tradu.getJSON().startsWith("{"+"subcats")) listCat = tradu.getCategorias();
+    		if (tradu.getJSON().startsWith("{"+"subcats")) arrayCat = tradu.getCategorias();
     		else cat = tradu.getCategoria();
     	} catch (Exception e) {
     		// TODO Auto-generated catch block
     		e.printStackTrace();
     	}
     	
-    	if (listCat != null){
-    		
-    		CategoryWSType aux = null;
-        	for(int i=0;i<listCat.size();i++){
-        		aux = listCat.get(i);
-        		this.etiq.add(aux.name);
-        		ids[i]=aux.id;
-        	}	
-        	
-    	}
-    	
     	if (cat != null){
-    		ArrayList<CategoryWSType> auxLista = (ArrayList<CategoryWSType>) cat.subcats;
-    		if (auxLista == null){
-        		this.etiq.add(cat.name);
-        		ids[0]=cat.id;
-    		}else{
-    			CategoryWSType aux = null;
-    			for(int i=0;i<auxLista.size();i++){
-            		aux = auxLista.get(i);
-            		this.etiq.add(aux.name);
-            		ids[i]=aux.id;
-    			}
-    		}
+    		arrayCat = (ArrayList<CategoryWSType>) cat.subcats;
     	}
-    	if (listCat==null && cat==null) getListaProblemas();
+    	//if (arrayCat == null) getListaProblemas();
     	
+    		
+    	CategoryWSType aux = null;
+    	
+        for(int i=0;i<arrayCat.size();i++){
+        	aux = arrayCat.get(i);
+        	this.etiq.add(aux.name);
+        	ids[i]=aux.id;
+        }	
+        	
     	    	
 		
         if (click == 0){
@@ -150,16 +137,16 @@ public class ProbListFragment extends Fragment implements AdapterView.OnItemClic
 		this.ws.setPath(path);
     	String respuesta = ws.getCall(getActivity(),token.getString("TOKEN"));
 		Traductor tradu = new Traductor(respuesta);
-    	ArrayList<ProblemWSType> listCat = null;
+    	ArrayList<ProblemWSType> arrayCat = null;
     	try{
-    		listCat = tradu.getProblemas();		
+    		arrayCat = tradu.getProblemas();		
     	} catch (Exception e) {
     		// TODO Auto-generated catch block
     		e.printStackTrace();
     	}
     	
-    	for(int i=0;i<listCat.size();i++){
-    		this.etiq.add(listCat.get(i).title);
+    	for(int i=0;i<arrayCat.size();i++){
+    		this.etiq.add(arrayCat.get(i).title);
     	}	
     	adapter.notifyDataSetChanged();
 		
