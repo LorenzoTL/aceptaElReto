@@ -8,11 +8,16 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import ws.CallerWS;
+import ws.Traductor;
 import ws.WSquery;
+import ws.WSquery.type;
+import acr.estructuras.CategoryWSType;
+import acr.estructuras.ProblemWSType;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -45,12 +50,15 @@ public class Enviar_Fragment extends Fragment{
 	private EditText code;
 	private Button bChooseFile;
 	private Button bEnviar;
-
+	private static int numProb;
+	Bundle token;
 	
-    public static Enviar_Fragment newInstance(int sectionNumber) {
+    public static Enviar_Fragment newInstance(int sectionNumber, String tk) {
         Enviar_Fragment fragment = new Enviar_Fragment();
         Bundle args = new Bundle();
         args.putInt(ARG_SECTION_NUMBER, sectionNumber);
+        args.putString("TOKEN", tk);
+        numProb = sectionNumber;
         fragment.setArguments(args);
         return fragment;
     }
@@ -64,7 +72,7 @@ public class Enviar_Fragment extends Fragment{
                              Bundle savedInstanceState) {
 
 		View rootView = inflater.inflate(R.layout.editor_layaout, container, false);
-        
+		token = this.getArguments();
         this.txtProblemName = (TextView)rootView.findViewById(R.id.txtProblemName);
         this.txtProblemNum = (TextView)rootView.findViewById(R.id.txtProblemNum);
         this.txtLenguaje = (TextView)rootView.findViewById(R.id.txtLenguaje);
@@ -94,9 +102,10 @@ public class Enviar_Fragment extends Fragment{
 		});
 		*/
 		
-        this.setEtiquetas();
+        
 		this.ws= new CallerWS();
         path = this.ws.getPath();
+        this.setEtiquetas();
         return rootView;
     }
 	
@@ -108,8 +117,22 @@ public class Enviar_Fragment extends Fragment{
 	 }
 	 
 	 public void setEtiquetas(){
-		 this.txtProblemName.setText("Problema: ");
-		 this.txtProblemNum.setText("Número: ");
+
+		path.addType(type.problem);
+		path.addID(numProb);
+		this.ws.setPath(path);
+ 		String respuesta = ws.getCall(getActivity(),token.getString("TOKEN"));
+ 		Traductor tradu = new Traductor(respuesta);
+ 		ProblemWSType prob = null;
+ 		try{
+ 		  	prob = tradu.getProblema();
+ 	    } catch (Exception e) {
+ 		// TODO Auto-generated catch block
+ 			e.printStackTrace();
+ 		}
+		 
+		 this.txtProblemName.setText("Problema: "+prob.title);
+		 this.txtProblemNum.setText("Número: "+prob.num);
 		 this.txtLenguaje.setText("Lenguaje: ");
 		 this.txtComentario.setText("Comentario: ");
 		 this.txtCF.setText("Archivo: ");

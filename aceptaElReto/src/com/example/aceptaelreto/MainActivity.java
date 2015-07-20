@@ -117,11 +117,11 @@ public class MainActivity extends ActionBarActivity implements
 		   	  break;
 		    case 3:
 		      fragmentManager.beginTransaction().replace(R.id.container,
-		      Inicio_Fragment.newInstance(position + 1)).commit();
+		      Inicio_Fragment.newInstance(position + 1,Token)).commit();
 		      break;
 		    case 4:
 			  fragmentManager.beginTransaction().replace(R.id.container,
-			  Enviar_Fragment.newInstance(position + 1)).commit();
+			  Enviar_Fragment.newInstance(position + 1,Token)).commit();
 			  break;
 		    case 5:
 			  fragmentManager.beginTransaction().replace(R.id.container,

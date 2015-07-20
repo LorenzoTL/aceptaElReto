@@ -533,6 +533,7 @@ int layout perfil_edit 0x7f030028
 int layout perfil_info 0x7f030029
 int layout single_item 0x7f03002a
 int layout support_simple_spinner_dropdown_item 0x7f03002b
+int layout usuario_info 0x7f03002c
 int menu global 0x7f0d0000
 int menu main 0x7f0d0001
 int menu problems 0x7f0d0002

@@ -40,7 +40,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 
-public class Perfil_Fragment extends Fragment{
+public class Usuario_Fragment extends Fragment{
 	
 	private static final String ARG_SECTION_NUMBER = "section_number";
 	
@@ -48,26 +48,24 @@ public class Perfil_Fragment extends Fragment{
     private WSquery path;
     
 	private TextView txtNick;
-	private TextView txtCorreo;
 	private TextView txtNombreCompleto;
-	private TextView txtNacimiento;
-	private TextView txtGenero;
 	private TextView txtPais;
 	private TextView txtInstitucion;
-	private Button btnEditProfile;
 	private NetworkImageView img;
 	private Bundle token;
+	private static int numUser;
 	
-    public static Perfil_Fragment newInstance(int sectionNumber, String tk) {
-        Perfil_Fragment fragment = new Perfil_Fragment();
+    public static Usuario_Fragment newInstance(int sectionNumber, String tk) {
+        Usuario_Fragment fragment = new Usuario_Fragment();
         Bundle args = new Bundle();
         args.putInt(ARG_SECTION_NUMBER, sectionNumber);
         args.putString("TOKEN", tk);
+        numUser = sectionNumber;
         fragment.setArguments(args);
         return fragment;
     }
     
-    public Perfil_Fragment() {
+    public Usuario_Fragment() {
     	 
     }
 		
@@ -76,29 +74,17 @@ public class Perfil_Fragment extends Fragment{
                              Bundle savedInstanceState) {
 
 		token = this.getArguments();
-		View rootView = inflater.inflate(R.layout.perfil_info, container, false);  
+		View rootView = inflater.inflate(R.layout.usuario_info, container, false);  
+		
         txtNick = (TextView)rootView.findViewById(R.id.txtNick);
-        txtCorreo = (TextView)rootView.findViewById(R.id.txtCorreo);
         txtNombreCompleto = (TextView)rootView.findViewById(R.id.txtNombreCompleto);
-        txtNacimiento = (TextView)rootView.findViewById(R.id.txtNacimiento);
-		txtGenero = (TextView)rootView.findViewById(R.id.txtGenero);
 		txtPais = (TextView)rootView.findViewById(R.id.txtPais);
 		txtInstitucion = (TextView)rootView.findViewById(R.id.txtInstitucion);
 		img = (NetworkImageView)rootView.findViewById(R.id.avatar);
-		btnEditProfile = (Button)rootView.findViewById(R.id.btnEditProfile);
-		/*btnEditProfile.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				Intent intent = new Intent(getActivity(), EditInfoActivity.class);
-				intent.putExtra("WALKER", walker);
-				startActivityForResult(intent, Constants.RESULT_EDIT);
-			}
-		});
-		*/
 		
 		this.ws= new CallerWS();
         path = this.ws.getPath();
-		this.setPerfil();
+		this.setUsuario();
         return rootView;
     }
 	
@@ -109,34 +95,29 @@ public class Perfil_Fragment extends Fragment{
 	                ARG_SECTION_NUMBER));
 	 }
 	
-	public void setPerfil(){
+	public void setUsuario(){
 		
-		path.addType(type.currentuser);
+		path.addType(type.user);
+		path.addID(numUser);
 	    this.ws.setPath(path);
 		String respuesta = ws.getCall(getActivity(),token.getString("TOKEN"));
 		Traductor tradu = new Traductor(respuesta);
-		UserWSType perfil = null;
+		UserWSType usuario = null;
 		try{
-			perfil = tradu.getUser();		
+			usuario = tradu.getUser();		
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
 		
-		String DATE_FORMAT = "dd/MM/yyyy";
-		Date date = perfil.birthday;
-		SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
-		this.txtNacimiento.setText("Fecha de Nacimiento: "+sdf.format(date));	
 		RequestQueue requestQueueImagen = Volley.newRequestQueue(getActivity().getApplicationContext());
 		ImageLoader imageLoader = new ImageLoader(requestQueueImagen, new BitmapLRUCache());
-		img.setImageUrl(perfil.avatar, imageLoader); 	
-		this.txtCorreo.setText("Correo: "+perfil.email);
-		this.txtNick.setText("Nick: "+perfil.nick);	
-		this.txtNombreCompleto.setText("Nombre: "+perfil.name);
-		this.txtGenero.setText("Genero: "+perfil.gender);
-		this.txtPais.setText("País: "+perfil.country.name);
-		this.txtInstitucion.setText("Institución: "+perfil.institution.name);
+		img.setImageUrl(usuario.avatar, imageLoader); 	
+		this.txtNick.setText("Nick: "+usuario.nick);	
+		this.txtNombreCompleto.setText("Nombre: "+usuario.name);
+		this.txtPais.setText("País: "+usuario.country.name);
+		this.txtInstitucion.setText("Institución: "+usuario.institution.name);
 		
 	}
 	
