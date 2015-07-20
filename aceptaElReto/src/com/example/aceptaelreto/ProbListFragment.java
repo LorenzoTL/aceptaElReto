@@ -38,12 +38,11 @@ public class ProbListFragment extends Fragment implements AdapterView.OnItemClic
     
     ArrayAdapter adapter;
     ArrayList<String> etiq = new ArrayList<String>();
-    ArrayList<Integer> ids = new ArrayList<Integer>();
+    int[] ids = new int[10];
     TextView pb;
     private CallerWS ws;
     private WSquery path;
     Bundle token;
-    private String aux;
     
     public static ProbListFragment newInstance(int sectionNumber, String tk) {
     	ProbListFragment fragment = new ProbListFragment();
@@ -84,63 +83,56 @@ public class ProbListFragment extends Fragment implements AdapterView.OnItemClic
     	String[] temp = null;
     	Resources res = getActivity().getApplicationContext().getResources();
     	
-    	if (aux=="Volúmenes") this.path.addType(type.volume);
-    	else{
-    		this.path.addType(type.cat);
-    		if (click > 45){	
-        		path.addID(click);
-            	path.addNumSubCat(1);
-        	}
-    	}
+    	this.path.addType(type.cat);
     	
     	if (click != 0){
-    		this.ws.setPath(path);
-    		String respuesta = ws.getCall(getActivity(),token.getString("TOKEN"));
-    		Traductor tradu = new Traductor(respuesta);
-    		ArrayList<CategoryWSType> arrayCat = null;
-    		CategoryWSType cat = null;
+    		path.addID(click);
+        	path.addNumSubCat(1);
+    	}
+
+    	this.ws.setPath(path);
+    	String respuesta = ws.getCall(getActivity(),token.getString("TOKEN"));
+    	Traductor tradu = new Traductor(respuesta);
+    	ArrayList<CategoryWSType> arrayCat = null;
+    	CategoryWSType cat = null;
     	
-    		try{
-    			cat = tradu.getCategoria();
-    		} catch (Exception e) {
+    	try{
+    		if (tradu.getJSON().startsWith("{"+"subcats")) arrayCat = tradu.getCategorias();
+    		else cat = tradu.getCategoria();
+    	} catch (Exception e) {
     		// TODO Auto-generated catch block
-    			e.printStackTrace();
-    		}
-    		
-    		if (cat != null){
-    			arrayCat = (ArrayList<CategoryWSType>) cat.subcats_lista;
-    		}
-    		//if (arrayCat == null) getListaProblemas(click);
+    		e.printStackTrace();
+    	}
+    	
+    	if (cat != null){
+    		arrayCat = (ArrayList<CategoryWSType>) cat.subcats;
+    	}
+    	//if (arrayCat == null) getListaProblemas();
     	
     		
-    		CategoryWSType aux = null;
-    		
-    		for(int i=0;i<arrayCat.size();i++){
-    			aux = arrayCat.get(i);
-    			this.etiq.add(aux.name);
-    			ids.add(i, aux.id);
-    		}	
-    		
-    		adapter.notifyDataSetChanged();
+    	CategoryWSType aux = null;
+    	
+        for(int i=0;i<arrayCat.size();i++){
+        	aux = arrayCat.get(i);
+        	this.etiq.add(aux.name);
+        	ids[i]=aux.id;
+        }	
+        	
+    	    	
 		
-    	}else{
-    		this.etiq.add("Volúmenes");
-			this.ids.add(0,1);
-			this.etiq.add("Categorías");
-			this.ids.add(1,45);
+        if (click == 0){
         	adapter = new MyArrayAdapter<String>(getActivity(),etiq);
         	list.setAdapter(adapter);
             list.setOnItemClickListener(this);
-        }
+        }else adapter.notifyDataSetChanged();
      
         pb.setText("Buscar por: ");
     }
     
-    public void getListaProblemas(int pos){
+    public void getListaProblemas(){
 		
     	path.cleanQuery();
 		path.addType(type.cat);
-		path.addID(pos);
 		path.addType(type.allproblems);
 		this.ws.setPath(path);
     	String respuesta = ws.getCall(getActivity(),token.getString("TOKEN"));
@@ -163,11 +155,15 @@ public class ProbListFragment extends Fragment implements AdapterView.OnItemClic
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-    	aux = (String) adapter.getItem(position);
+    	String aux = (String) adapter.getItem(position);
     	adapter.clear();
     	path.cleanQuery();
-    	setLista(ids.get(position));
+    	setLista(ids[position]);
     	
+    	// Falta terminar el resto
+    	
+        /*String msg = "Elegiste la tarea:\n"+aux;
+        Toast.makeText(getActivity(),msg,Toast.LENGTH_LONG).show();*/
 
     }
 
