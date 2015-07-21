@@ -96,7 +96,7 @@ public class Usuario_Fragment extends Fragment{
 	 }
 	
 	public void setUsuario(){
-		
+		/*
 		path.addType(type.user);
 		path.addID(numUser);
 	    this.ws.setPath(path);
@@ -118,7 +118,7 @@ public class Usuario_Fragment extends Fragment{
 		this.txtNombreCompleto.setText("Nombre: "+usuario.name);
 		this.txtPais.setText("País: "+usuario.country.name);
 		this.txtInstitucion.setText("Institución: "+usuario.institution.name);
-		
+		*/
 	}
 	
 	public static Drawable LoadImageFromWebOperations(String url) {

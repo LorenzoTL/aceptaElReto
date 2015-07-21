@@ -80,7 +80,7 @@ public class ProbListFragment extends Fragment implements AdapterView.OnItemClic
     }
     
     public void setLista(int click){
-    	
+    	/*
     	String[] temp = null;
     	Resources res = getActivity().getApplicationContext().getResources();
     	
@@ -133,11 +133,11 @@ public class ProbListFragment extends Fragment implements AdapterView.OnItemClic
             list.setOnItemClickListener(this);
         }
      
-        pb.setText("Buscar por: ");
+        pb.setText("Buscar por: ");*/
     }
     
     public void getListaProblemas(int pos){
-		
+		/*
     	path.cleanQuery();
 		path.addType(type.cat);
 		path.addID(pos);
@@ -156,7 +156,7 @@ public class ProbListFragment extends Fragment implements AdapterView.OnItemClic
     	for(int i=0;i<arrayCat.size();i++){
     		this.etiq.add(arrayCat.get(i).title);
     	}	
-    	adapter.notifyDataSetChanged();
+    	adapter.notifyDataSetChanged();*/
 		
     }
 

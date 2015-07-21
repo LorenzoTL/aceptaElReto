@@ -133,7 +133,7 @@ public class MainActivity extends ActionBarActivity implements
 			  break;
 		    case 7:
 		      fragmentManager.beginTransaction().replace(R.id.container,
-			  Layout6Fragment.newInstance(position + 1)).commit();
+		      ProblemsActivity.newInstance(position + 1)).commit();
 			  break;
 		  }
 		  

@@ -117,7 +117,7 @@ public class Enviar_Fragment extends Fragment{
 	 }
 	 
 	 public void setEtiquetas(){
-
+/*
 		path.addType(type.problem);
 		path.addID(numProb);
 		this.ws.setPath(path);
@@ -136,6 +136,6 @@ public class Enviar_Fragment extends Fragment{
 		 this.txtLenguaje.setText("Lenguaje: ");
 		 this.txtComentario.setText("Comentario: ");
 		 this.txtCF.setText("Archivo: ");
-		 this.txtCode.setText("Código: ");
+		 this.txtCode.setText("Código: ");*/
 	 }
 }
