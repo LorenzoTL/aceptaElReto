@@ -4,13 +4,37 @@
     android:layout_height="match_parent"
     android:background="@color/defaultBackground">
     
+    <TextView
+	        android:id="@+id/QueEs"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_marginTop="30dp"
+	        android:padding="5dp"
+	        android:ems="10"
+	        android:text="¿Qué es?"
+	        android:textColor="@color/background"
+	        android:gravity="center"
+	        android:textSize="30sp" />
+    
+    <TextView
+	        android:id="@+id/txtQueEs"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_marginTop="10dp"
+	        android:padding="5dp"
+	        android:textColor="@color/background"
+	        android:gravity="center"
+	        android:textSize="15sp" 
+	         android:layout_below="@+id/QueEs"/>
+    
    <LinearLayout
         android:id="@+id/bfield"
         android:layout_width="wrap_content"
      	android:layout_height="wrap_content"
     	android:layout_marginTop="60dp"
     	android:layout_centerHorizontal="true"
-    	android:orientation="horizontal">
+    	android:orientation="horizontal"
+    	 android:layout_below="@+id/txtQueEs">
     	
 
    <EditText

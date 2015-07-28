@@ -121,6 +121,16 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/probEnvios"/>
+    
+    <TextView
+        android:id="@+id/noEnvios"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/txtInstitucion"
+         android:layout_centerHorizontal="true"
+        android:textSize="18sp"
+        android:text="No hay envíos"
+        android:textColor="@color/black" />
 	
     
 </RelativeLayout>

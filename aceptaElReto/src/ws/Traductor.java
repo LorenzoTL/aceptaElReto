@@ -94,6 +94,18 @@ public class Traductor {
 	    	return gson.fromJson(data, SubmissionWSType.class);
 		}
 	}
+	public SubmissionsListWSType getSubmissions() throws Exception{
+		if(this.JSON.startsWith("<?xml")){
+			Serializer serial = new Persister(m);
+			SubmissionsListWSType data = serial.read(SubmissionsListWSType.class, this.JSON);
+	    	return data;
+		}else{
+			Gson gson = new GsonBuilder().create();
+	    	JsonParser parser = new JsonParser();
+	    	JsonObject data = parser.parse(this.JSON).getAsJsonObject();
+	    	return gson.fromJson(data, SubmissionsListWSType.class);
+		}
+	}
 	public NewSession getSession() throws Exception{
 		if(this.JSON.contains("<?xml")){
 			Serializer serial = new Persister(m);

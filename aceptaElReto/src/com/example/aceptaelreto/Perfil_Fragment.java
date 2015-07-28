@@ -31,6 +31,9 @@ import ws.WSquery.type;
 
 
 
+
+
+
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -59,7 +62,12 @@ import com.android.volley.toolbox.Volley;
 
 
 
+
+
+
+import acr.estructuras.CategoryWSType;
 import acr.estructuras.SubmissionWSType;
+import acr.estructuras.SubmissionsListWSType;
 import acr.estructuras.UserWSType;
 import android.app.Activity;
 import android.app.FragmentManager;
@@ -94,14 +102,18 @@ public class Perfil_Fragment extends Fragment{
 	private TextView txtGenero;
 	private TextView txtPais;
 	private TextView txtInstitucion;
+	private TextView noEnvios;
 	private Button btnEditProfile;
 	private NetworkImageView img;
 	private Bundle token;
 	private static int idUserSearch;
 	private ListView list;
 	private ArrayList<String> probEnv;
-	private ArrayAdapter adaptador;
+	private ArrayAdapter<String> adaptador;
 	private ArrayList<Info_Envios> info;
+	
+	private ArrayList<String> etiq = new ArrayList<String>();
+	private ArrayList<Integer> ids = new ArrayList<Integer>();
 	
     public static Perfil_Fragment newInstance(int sectionNumber, String tk, int id) {
         Perfil_Fragment fragment = new Perfil_Fragment();
@@ -135,9 +147,11 @@ public class Perfil_Fragment extends Fragment{
 		txtGenero = (TextView)rootView.findViewById(R.id.txtGenero);
 		txtPais = (TextView)rootView.findViewById(R.id.txtPais);
 		txtInstitucion = (TextView)rootView.findViewById(R.id.txtInstitucion);
+		noEnvios = (TextView)rootView.findViewById(R.id.noEnvios);
 		img = (NetworkImageView)rootView.findViewById(R.id.avatar);
 		list = (ListView)rootView.findViewById(R.id.listProbEnv);
-		//adaptador = new MyArrayAdapter(getActivity(),);
+		adaptador = new MyArrayAdapter(getActivity(),etiq,ids,1);
+		list.setAdapter(adaptador);
 		
 		btnEditProfile = (Button)rootView.findViewById(R.id.btnEditProfile);
 		/*btnEditProfile.setOnClickListener(new OnClickListener() {
@@ -186,7 +200,8 @@ public class Perfil_Fragment extends Fragment{
 	    private SimpleDateFormat format;
 	    private String[] estrucType;
 	    private UserWSType perfil = null;
-	    private SubmissionWSType subs = null;
+	    private SubmissionsListWSType subs = null;
+	    private ArrayList<SubmissionWSType> sublist;
 	    
 		public MyAsyncTask(Context mContext, String processMessage) {
 
@@ -239,12 +254,20 @@ public class Perfil_Fragment extends Fragment{
 			respuesta = ws.getCall(token.getString("TOKEN"));
 			tradu = new Traductor(respuesta);
 			try{
-				subs = tradu.getSubmission();
+				subs = tradu.getSubmissions();
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
+			sublist = (ArrayList<SubmissionWSType>) subs.submission;
+			SubmissionWSType aux = null;
+			for (int i=0;i<sublist.size();i++){
+				aux = sublist.get(i);
+    			etiq.add(aux.problem.title);
+    			ids.add(i, aux.problemId);
+				
+			}
+
 			requestQueueImagen = Volley.newRequestQueue(getActivity().getApplicationContext());
 			imageLoader = new ImageLoader(requestQueueImagen, new BitmapLRUCache());
 			format = new SimpleDateFormat("dd/MM/yyyy");
@@ -277,9 +300,9 @@ public class Perfil_Fragment extends Fragment{
 		    }
 			
 			if(subs != null){
-				
+				noEnvios.setVisibility(View.GONE);
 			}
-	    	
+			adaptador.notifyDataSetChanged();
 	    	pDlg.dismiss();
 	    }
 		

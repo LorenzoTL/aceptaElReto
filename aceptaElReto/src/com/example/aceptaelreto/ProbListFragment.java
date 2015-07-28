@@ -41,11 +41,11 @@ import android.support.v4.app.Fragment;
  /*
   * clase que genera el fragment de 
   */
-public class ProbListFragment extends Fragment implements AdapterView.OnItemClickListener {
+public class ProbListFragment extends Fragment{
     private static final String ARG_SECTION_NUMBER = "section_number";
     ListView list;
     
-    ArrayAdapter<String> adapter;
+    ArrayAdapter adapter;
     ArrayList<String> etiq = new ArrayList<String>();
     ArrayList<Integer> ids = new ArrayList<Integer>();
     TextView pb;
@@ -76,8 +76,20 @@ public class ProbListFragment extends Fragment implements AdapterView.OnItemClic
         token = this.getArguments();
         list = (ListView)rootView.findViewById(R.id.listap);
         pb = (TextView)rootView.findViewById(R.id.pb);
-        
-        
+        adapter = new MyArrayAdapter<String>(getActivity(),etiq,ids,0);
+    	
+        list.setAdapter(adapter);
+    	list.setOnItemClickListener(new android.widget.AdapterView.OnItemClickListener() {
+        	@Override
+        	public void onItemClick(AdapterView<?> parent, View view,int position, long id) {
+        		aux = (String) adapter.getItem(position);
+            	adapter.clear();
+            	path.cleanQuery();
+            	task = new MyAsyncTask(getActivity(),"GETting data...",view,position);
+            	task.execute(ids.get(position));                
+        	  }
+        });
+    	
         task = new MyAsyncTask(getActivity(),"GETting data...",rootView,0);
 		task.execute(0);
 		
@@ -115,18 +127,19 @@ public class ProbListFragment extends Fragment implements AdapterView.OnItemClic
     	adapter.notifyDataSetChanged();
 		
     }
-
+/*
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
     	aux = (String) adapter.getItem(position);
     	adapter.clear();
     	path.cleanQuery();
+    	task = new MyAsyncTask(getActivity(),"GETting data...",view,position);
     	task.execute(ids.get(position));
     	
 
     }
-    
+    */ 
 private class MyAsyncTask extends AsyncTask<Integer, Void, CategoryWSType>{
 		
 		private ProgressDialog pDlg = null;
@@ -223,12 +236,8 @@ private class MyAsyncTask extends AsyncTask<Integer, Void, CategoryWSType>{
 		
 		@Override
 	    protected void onPostExecute(CategoryWSType perfil) { 
-			if (click == 0){
-				adapter = new MyArrayAdapter<String>(getActivity(),etiq);
-	        	list.setAdapter(adapter);
-	            taskDone(true);
-			}
-			else adapter.notifyDataSetChanged();
+
+			adapter.notifyDataSetChanged();
 			
 			pb.setText("Buscar por: ");
 	    	
@@ -237,8 +246,5 @@ private class MyAsyncTask extends AsyncTask<Integer, Void, CategoryWSType>{
 		
 	}
 
-	public void taskDone(boolean b){
-		list.setOnItemClickListener((OnItemClickListener) getActivity());
-	}
 
 }
