@@ -37,7 +37,9 @@ public class MyArrayAdapter<String> extends ArrayAdapter<String> {
         //Obteniendo una instancia del inflater
         LayoutInflater inflater = (LayoutInflater)getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         
-        if (opc == 0){
+        switch (opc) {
+        
+        case 0:
         	//Comprobando si el View no existe
         	if (convertView == null) {
         		//Si no existe, entonces inflarlo con two_line_list_item.xml
@@ -51,8 +53,8 @@ public class MyArrayAdapter<String> extends ArrayAdapter<String> {
 
         	titulo.setText((CharSequence) listaName.get(position));
         	img.setImageResource(R.drawable.arrow);
-        	//Devolver al ListView la fila creada
-        }else{
+        	break;
+        case 1:	
         	//Comprobando si el View no existe
         	if (convertView == null) {
         		//Si no existe, entonces inflarlo con two_line_list_item.xml
@@ -61,12 +63,24 @@ public class MyArrayAdapter<String> extends ArrayAdapter<String> {
 
         	//Obteniendo instancias de los text views
         	TextView probId = (TextView)convertView.findViewById(R.id.box_prob_id);
-        	TextView probname = (TextView)convertView.findViewById(R.id.box_prob_id);
+        	TextView probname = (TextView)convertView.findViewById(R.id.box_leng);
         	//Obteniendo instancia de la Tarea en la posición actual
 
         	probname.setText((CharSequence) listaName.get(position));
         	probId.setText((CharSequence) Integer.toString(listaId.get(position)));
-        	//Devolver al ListView la fila creada
+        	break;
+        case 2:
+        	/*if (convertView == null) {
+        		convertView = inflater.inflate(R.layout.envios_box, parent, false);
+        	}
+
+        	
+        	TextView probId = (TextView)convertView.findViewById(R.id.box_prob_id);
+        	TextView probname = (TextView)convertView.findViewById(R.id.box_leng);
+
+        	probname.setText((CharSequence) listaName.get(position));
+        	probId.setText((CharSequence) Integer.toString(listaId.get(position)));*/
+        	break;
         }
         return convertView;
 

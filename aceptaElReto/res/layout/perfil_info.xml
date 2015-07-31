@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/defaultBackground"
+    android:background="@color/background"
     tools:context="com.example.aceptaelreto.Perfil_Fragment">
     
     
@@ -120,17 +120,19 @@
         android:id="@+id/listProbEnv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/probEnvios"/>
+        android:layout_below="@+id/probEnvios"
+        android:layout_centerHorizontal="true"/>
     
     <TextView
         android:id="@+id/noEnvios"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/txtInstitucion"
-         android:layout_centerHorizontal="true"
+        android:layout_height="wrap_content" 
+        android:layout_below="@+id/probEnvios"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
         android:textSize="18sp"
         android:text="No hay envíos"
-        android:textColor="@color/black" />
+        android:textColor="@color/black"/>
 	
     
 </RelativeLayout>

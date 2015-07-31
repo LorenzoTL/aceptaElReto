@@ -16,6 +16,7 @@ import ws.WSquery.type;
 import acr.estructuras.CategoryWSType;
 import acr.estructuras.ListWSType;
 import acr.estructuras.ProblemDetailsList;
+import acr.estructuras.ProblemListWSType;
 import acr.estructuras.ProblemWSType;
 import acr.estructuras.UserWSType;
 import android.app.Activity;
@@ -43,17 +44,20 @@ import android.support.v4.app.Fragment;
   */
 public class ProbListFragment extends Fragment{
     private static final String ARG_SECTION_NUMBER = "section_number";
-    ListView list;
     
-    ArrayAdapter adapter;
-    ArrayList<String> etiq = new ArrayList<String>();
-    ArrayList<Integer> ids = new ArrayList<Integer>();
-    TextView pb;
+    
+    private ArrayAdapter<String> adapter;
+    private ArrayList<String> etiq = new ArrayList<String>();
+    private ArrayList<Integer> ids = new ArrayList<Integer>();
+    private TextView pb;
+    private ListView list;
     private CallerWS ws;
     private WSquery path;
-    Bundle token;
+    private Bundle token;
     private String aux;
+    private int adapOpc;
     private MyAsyncTask task;
+    private View header;
     
     public static ProbListFragment newInstance(int sectionNumber, String tk) {
     	ProbListFragment fragment = new ProbListFragment();
@@ -73,16 +77,23 @@ public class ProbListFragment extends Fragment{
             Bundle savedInstanceState) {
     	
         View rootView = inflater.inflate(R.layout.lista_prob, container, false);
+        
+        //header = (View)inflater.inflate(R.layout.problem_header,null);
+        
         token = this.getArguments();
+        adapOpc = 0;
         list = (ListView)rootView.findViewById(R.id.listap);
         pb = (TextView)rootView.findViewById(R.id.pb);
-        adapter = new MyArrayAdapter<String>(getActivity(),etiq,ids,0);
+        
+    	//list.addHeaderView(header); 
+      //  list.addFooterView(rootView);
+        
+        adapter = new MyArrayAdapter<String>(getActivity(),etiq,ids,adapOpc);
     	
         list.setAdapter(adapter);
     	list.setOnItemClickListener(new android.widget.AdapterView.OnItemClickListener() {
         	@Override
         	public void onItemClick(AdapterView<?> parent, View view,int position, long id) {
-        		aux = (String) adapter.getItem(position);
             	adapter.clear();
             	path.cleanQuery();
             	task = new MyAsyncTask(getActivity(),"GETting data...",view,position);
@@ -106,24 +117,7 @@ public class ProbListFragment extends Fragment{
     
     public void getListaProblemas(int pos){
 		
-    	path.cleanQuery();
-		path.addType(type.cat);
-		path.addID(pos);
-		path.addType(type.allproblems);
-		this.ws.setPath(path);
-    	String respuesta = ws.getCall(token.getString("TOKEN"));
-		Traductor tradu = new Traductor(respuesta);
-    	ArrayList<ProblemWSType> arrayCat = null;
-    	try{
-    		arrayCat = tradu.getProblemas();		
-    	} catch (Exception e) {
-    		// TODO Auto-generated catch block
-    		e.printStackTrace();
-    	}
     	
-    	for(int i=0;i<arrayCat.size();i++){
-    		this.etiq.add(arrayCat.get(i).title);
-    	}	
     	adapter.notifyDataSetChanged();
 		
     }
@@ -211,17 +205,44 @@ private class MyAsyncTask extends AsyncTask<Integer, Void, CategoryWSType>{
 	    		if (cat != null){
 	    			arrayCat = (ArrayList<CategoryWSType>) cat.subcats_lista;
 	    		}
-	    		//if (arrayCat == null) getListaProblemas(click);
-	    	
 	    		
-	    		CategoryWSType aux = null;
+	    		//Caso lista de problemas
 	    		
-	    		for(int i=0;i<arrayCat.size();i++){
-	    			aux = arrayCat.get(i);
-	    			etiq.add(aux.name);
-	    			ids.add(i, aux.id);
+	    		if (arrayCat == null){
+	    			path.cleanQuery();
+	    			path.addType(type.cat);
+	    			path.addID(click);
+	    			path.addType(type.allproblems);
+	    			ws.setPath(path);
+	    	    	respuesta = ws.getCall(token.getString("TOKEN"));
+	    			tradu = new Traductor(respuesta);
+	    	    	ProblemListWSType arrayProb = null;
+	    	    	ArrayList<ProblemWSType> listProb = null;
+	    	    	try{
+	    	    		arrayProb = tradu.getProblemaList();		
+	    	    	} catch (Exception e) {
+	    	    		// TODO Auto-generated catch block
+	    	    		e.printStackTrace();
+	    	    	}
+	    	    	listProb = (ArrayList<ProblemWSType>) arrayProb.problemlist;
+	    	    	
+	    	    	for(int i=0;i<listProb.size();i++){
+	    	    		etiq.add(listProb.get(i).title);
+	    	    	}	
+	    	    	
+
+	    	    	
+	    	    // Explorando Categorías/Volúmenes
+	    	    	
+	    		}else{
+	    			CategoryWSType aux = null;
+		    		
+		    		for(int i=0;i<arrayCat.size();i++){
+		    			aux = arrayCat.get(i);
+		    			etiq.add(aux.name);
+		    			ids.add(i, aux.id);
+		    		}
 	    		}	
-	    			
 			
 	    	}else{
 	    		etiq.add("Volúmenes");

@@ -21,7 +21,7 @@ En el caso del PUT, tendremos que dar valor a los atributos
 		private String fileLocal;
 		private String fileWS;
 		
-con el path del archivo que queramos en Local y em WS.
+con el path del archivo que queramos en Local y en WS.
 
 Despues haremos la llamada que corresponda con los metodos del caller WS:
 

@@ -8,31 +8,19 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
+
 import ws.CallerWS;
 import ws.Traductor;
 import ws.WSquery;
 import ws.WSquery.type;
+
+
 //import com.example.aceptaelreto.MainActivity;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -42,25 +30,6 @@ import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -114,6 +83,7 @@ public class Perfil_Fragment extends Fragment{
 	
 	private ArrayList<String> etiq = new ArrayList<String>();
 	private ArrayList<Integer> ids = new ArrayList<Integer>();
+
 	
     public static Perfil_Fragment newInstance(int sectionNumber, String tk, int id) {
         Perfil_Fragment fragment = new Perfil_Fragment();
@@ -139,7 +109,9 @@ public class Perfil_Fragment extends Fragment{
 		probEnv = new ArrayList<String>();
 		info =new ArrayList<Info_Envios>();
 		
-		View rootView = inflater.inflate(R.layout.perfil_info, container, false);  
+		View rootView = inflater.inflate(R.layout.perfil_info, container, false);
+		
+		
         txtNick = (TextView)rootView.findViewById(R.id.txtNick);
         txtCorreo = (TextView)rootView.findViewById(R.id.txtCorreo);
         txtNombreCompleto = (TextView)rootView.findViewById(R.id.txtNombreCompleto);
@@ -230,6 +202,27 @@ public class Perfil_Fragment extends Fragment{
 		@Override
 		protected UserWSType doInBackground(String... params) {
 			
+			// prueba post
+			JSONObject json= new JSONObject();
+			path.addParam("name", "JoseLorenzo");
+			//path.addType(type.currentuser);
+			path.addType(type.user);
+			path.addID(42504);
+			path.addType(type.profile);
+			try {
+				json.put("name", "JoseLorenzo");
+			} catch (JSONException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			path.setJson(json);
+			ws.setPath(path);
+			ws.putCall(token.getString("TOKEN"));
+			
+			path.cleanQuery();
+			
+			//fin prueba
+			
 			estrucType = params;
 			if (idUserSearch != 0){
 				path.addType(type.user);
@@ -254,19 +247,22 @@ public class Perfil_Fragment extends Fragment{
 			respuesta = ws.getCall(token.getString("TOKEN"));
 			tradu = new Traductor(respuesta);
 			try{
-				subs = tradu.getSubmissions();
+				subs = tradu.getSubmissionList();
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			sublist = (ArrayList<SubmissionWSType>) subs.submission;
-			SubmissionWSType aux = null;
-			for (int i=0;i<sublist.size();i++){
-				aux = sublist.get(i);
-    			etiq.add(aux.problem.title);
-    			ids.add(i, aux.problemId);
-				
+			sublist = (ArrayList<SubmissionWSType>) subs.submissionlist;
+			if (sublist != null){
+				SubmissionWSType aux = null;
+				for (int i=0;i<sublist.size();i++){
+					aux = sublist.get(i);
+	    			etiq.add(aux.problem.title);
+	    			ids.add(i, aux.problem.num);
+					
+				}
 			}
+			
 
 			requestQueueImagen = Volley.newRequestQueue(getActivity().getApplicationContext());
 			imageLoader = new ImageLoader(requestQueueImagen, new BitmapLRUCache());
@@ -281,6 +277,7 @@ public class Perfil_Fragment extends Fragment{
 		    	txtNacimiento.setVisibility(View.GONE);
 		    	txtCorreo.setVisibility(View.GONE);
 		    	txtGenero.setVisibility(View.GONE);
+		    	btnEditProfile.setVisibility(View.GONE);
 		    	img.setImageUrl(perfil.avatar, imageLoader);
 		    	txtNick.setText("Nick: "+perfil.nick);	
 		    	txtNombreCompleto.setText("Nombre: "+perfil.name);
@@ -299,7 +296,7 @@ public class Perfil_Fragment extends Fragment{
 		    	txtInstitucion.setText("Institución: "+perfil.institution.name);
 		    }
 			
-			if(subs != null){
+			if(sublist != null){
 				noEnvios.setVisibility(View.GONE);
 			}
 			adaptador.notifyDataSetChanged();

@@ -82,28 +82,28 @@ public class Traductor {
     	return gson.fromJson(data, UserWSType.class);
 		}
 	}
+	public SubmissionsListWSType getSubmissionList() throws Exception{
+		if(this.JSON.startsWith("<?xml")){
+			Serializer serial = new Persister(m);
+			SubmissionsListWSType data = serial.read(SubmissionsListWSType.class, this.JSON);
+	    	return data;
+		}else{
+			Gson gson = this.getGsonbuilderAdapterSubmissionList();
+	    	JsonParser parser = new JsonParser();
+	    	JsonObject data = parser.parse(this.JSON).getAsJsonObject();
+	    	return gson.fromJson(data, SubmissionsListWSType.class);
+		}
+	}
 	public SubmissionWSType getSubmission() throws Exception{
 		if(this.JSON.startsWith("<?xml")){
 			Serializer serial = new Persister(m);
 			SubmissionWSType data = serial.read(SubmissionWSType.class, this.JSON);
 	    	return data;
 		}else{
-			Gson gson = new GsonBuilder().create();
+			Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ssZZZ").create();
 	    	JsonParser parser = new JsonParser();
 	    	JsonObject data = parser.parse(this.JSON).getAsJsonObject();
 	    	return gson.fromJson(data, SubmissionWSType.class);
-		}
-	}
-	public SubmissionsListWSType getSubmissions() throws Exception{
-		if(this.JSON.startsWith("<?xml")){
-			Serializer serial = new Persister(m);
-			SubmissionsListWSType data = serial.read(SubmissionsListWSType.class, this.JSON);
-	    	return data;
-		}else{
-			Gson gson = new GsonBuilder().create();
-	    	JsonParser parser = new JsonParser();
-	    	JsonObject data = parser.parse(this.JSON).getAsJsonObject();
-	    	return gson.fromJson(data, SubmissionsListWSType.class);
 		}
 	}
 	public NewSession getSession() throws Exception{
@@ -112,7 +112,7 @@ public class Traductor {
 			NewSession data = serial.read(NewSession.class, this.JSON);
 	    	return data;
 		}else{
-			Gson gson = new GsonBuilder().create();
+			Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ssZZZ").create();
 	    	JsonParser parser = new JsonParser();
 	    	JsonObject data = parser.parse(this.JSON).getAsJsonObject();
 	    	return gson.fromJson(data, NewSession.class);
@@ -136,7 +136,7 @@ public class Traductor {
 			CountryWSType data = serial.read(CountryWSType.class, this.JSON);
 	    	return data;
 		}else{
-		Gson gson = new GsonBuilder().create();
+		Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ssZZZ").create();
     	JsonParser parser = new JsonParser();
     	JsonObject data = parser.parse(this.JSON).getAsJsonObject();
     	return gson.fromJson(data, CountryWSType.class);
@@ -148,7 +148,7 @@ public class Traductor {
 			ProblemDetailsList data = serial.read(ProblemDetailsList.class, this.JSON);
 	    	return data;
 		}else{
-		Gson gson = new GsonBuilder().create();
+		Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ssZZZ").create();
     	JsonParser parser = new JsonParser();
     	JsonObject data = parser.parse(this.JSON).getAsJsonObject();
     	return gson.fromJson(data, ProblemDetailsList.class);
@@ -160,10 +160,22 @@ public class Traductor {
 			ProblemWSType data = serial.read(ProblemWSType.class, this.JSON);
 	    	return data;
 		}else{
-		Gson gson = new GsonBuilder().create();
+		Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ssZZZ").create();
     	JsonParser parser = new JsonParser();
     	JsonObject data = parser.parse(this.JSON).getAsJsonObject();
     	return gson.fromJson(data, ProblemWSType.class);
+		}
+	}
+	public ProblemListWSType getProblemaList() throws Exception{
+		if(this.JSON.startsWith("<?xml")){
+			Serializer serial = new Persister(m);
+			ProblemListWSType data = serial.read(ProblemListWSType.class, this.JSON);
+	    	return data;
+		}else{
+			Gson gson = this.getGsonbuilderAdapterProblemList();
+	    	JsonParser parser = new JsonParser();
+	    	JsonObject data = parser.parse(this.JSON).getAsJsonObject();
+	    	return gson.fromJson(data, ProblemListWSType.class);
 		}
 	}
 	public UserGenderWSType getGenero()throws Exception{
@@ -172,7 +184,7 @@ public class Traductor {
 			UserGenderWSType data = serial.read(UserGenderWSType.class, this.JSON);
 	    	return data;
 		}else{
-		Gson gson = new GsonBuilder().create();
+		Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ssZZZ").create();
     	JsonParser parser = new JsonParser();
     	JsonObject data = parser.parse(this.JSON).getAsJsonObject();
     	return gson.fromJson(data, UserGenderWSType.class);
@@ -184,7 +196,7 @@ public class Traductor {
 			UserRoleWSType data = serial.read(UserRoleWSType.class, this.JSON);
 	    	return data;
 		}else{
-		Gson gson = new GsonBuilder().create();
+		Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ssZZZ").create();
     	JsonParser parser = new JsonParser();
     	JsonObject data = parser.parse(this.JSON).getAsJsonObject();
     	return gson.fromJson(data, UserRoleWSType.class);
@@ -306,7 +318,7 @@ public class Traductor {
 		    public CategoryWSType deserialize(JsonElement arg0, Type arg1,
 		        JsonDeserializationContext arg2) throws JsonParseException {
 		        JsonObject appleObj = arg0.getAsJsonObject();
-		        Gson g = new Gson();
+		        Gson g = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ssZZZ").create();
 		        // Construct an apple (this shouldn't try to parse the seeds stuff
 		        CategoryWSType a = g.fromJson(arg0, CategoryWSType.class);
 		        if(appleObj.has("subcats")){
@@ -369,7 +381,73 @@ public class Traductor {
 		        return a;
 		    }
 		});
-		return b.create();
+		return b.setDateFormat("yyyy-MM-dd'T'HH:mm:ssZZZ").create();
+	}
+	private Gson getGsonbuilderAdapterSubmissionList(){
+		GsonBuilder b = new GsonBuilder();
+		b.registerTypeAdapter(SubmissionsListWSType.class, new JsonDeserializer<SubmissionsListWSType>() {
+		    @Override
+		    public SubmissionsListWSType deserialize(JsonElement arg0, Type arg1,
+		        JsonDeserializationContext arg2) throws JsonParseException {
+		        JsonObject appleObj = arg0.getAsJsonObject();
+		        Gson g = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ssZZZ").create();
+		        // Construct an apple (this shouldn't try to parse the seeds stuff
+		        SubmissionsListWSType a = g.fromJson(arg0, SubmissionsListWSType.class);
+		        if(appleObj.has("submission")){
+		        List<SubmissionWSType> subcats = null;
+		        // Check to see if we were given a list or a single seed
+		        if (appleObj.get("submission").isJsonArray()) {
+		            // if it's a list, just parse that from the JSON
+		        	subcats = g.fromJson(appleObj.get("submission"),
+		                    new TypeToken<List<SubmissionWSType>>() {
+		                    }.getType());
+		        } else {
+		            // otherwise, parse the single seed,
+		            // and add it to the list
+		        	SubmissionWSType single = g.fromJson(appleObj.get("submission"), SubmissionWSType.class);
+		        	subcats = new ArrayList<SubmissionWSType>();
+		        	subcats.add(single);
+		        }
+		        // set the correct subcats list
+		        a.setSubmissionlist(subcats);
+		        }
+		        return a;
+		    }
+		});
+		return b.setDateFormat("yyyy-MM-dd'T'HH:mm:ssZZZ").create();
+	}
+	private Gson getGsonbuilderAdapterProblemList(){
+		GsonBuilder b = new GsonBuilder();
+		b.registerTypeAdapter(ProblemListWSType.class, new JsonDeserializer<ProblemListWSType>() {
+		    @Override
+		    public ProblemListWSType deserialize(JsonElement arg0, Type arg1,
+		        JsonDeserializationContext arg2) throws JsonParseException {
+		        JsonObject appleObj = arg0.getAsJsonObject();
+		        Gson g = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ssZZZ").create();
+		        // Construct an apple (this shouldn't try to parse the seeds stuff
+		        ProblemListWSType a = g.fromJson(arg0, ProblemListWSType.class);
+		        if(appleObj.has("problem")){
+		        List<ProblemWSType> subcats = null;
+		        // Check to see if we were given a list or a single seed
+		        if (appleObj.get("problem").isJsonArray()) {
+		            // if it's a list, just parse that from the JSON
+		        	subcats = g.fromJson(appleObj.get("problem"),
+		                    new TypeToken<List<ProblemWSType>>() {
+		                    }.getType());
+		        } else {
+		            // otherwise, parse the single seed,
+		            // and add it to the list
+		        	ProblemWSType single = g.fromJson(appleObj.get("problem"), ProblemWSType.class);
+		        	subcats = new ArrayList<ProblemWSType>();
+		        	subcats.add(single);
+		        }
+		        // set the correct subcats list
+		        a.setSubmissionlist(subcats);
+		        }
+		        return a;
+		    }
+		});
+		return b.setDateFormat("yyyy-MM-dd'T'HH:mm:ssZZZ").create();
 	}
 }
 

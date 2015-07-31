@@ -384,13 +384,13 @@ int id action_bar_spinner 0x7f090002
 int id action_bar_subtitle 0x7f09001f
 int id action_bar_title 0x7f09001e
 int id action_context_bar 0x7f090032
-int id action_example 0x7f09008c
+int id action_example 0x7f090090
 int id action_menu_divider 0x7f090005
 int id action_menu_presenter 0x7f090006
 int id action_mode_bar 0x7f09002e
 int id action_mode_bar_stub 0x7f09002d
 int id action_mode_close_button 0x7f090020
-int id action_settings 0x7f09008b
+int id action_settings 0x7f09008f
 int id activity_chooser_view_content 0x7f090021
 int id always 0x7f090014
 int id avatar 0x7f090077
@@ -439,6 +439,10 @@ int id expand_activities_button 0x7f090022
 int id expanded_menu 0x7f090028
 int id faq1 0x7f090068
 int id gridView1 0x7f090069
+int id h_Id 0x7f09008a
+int id h_env 0x7f09008c
+int id h_prob 0x7f09008b
+int id h_user 0x7f09008d
 int id home 0x7f090000
 int id homeAsUp 0x7f09000e
 int id icon 0x7f090026
@@ -490,7 +494,7 @@ int id tabMode 0x7f09000c
 int id text1 0x7f090072
 int id textReg 0x7f09003f
 int id textRegistrate 0x7f090048
-int id textView 0x7f09008a
+int id textView 0x7f09008e
 int id textView1 0x7f090075
 int id title 0x7f090027
 int id txtCF 0x7f09005c
@@ -554,8 +558,9 @@ int layout my_scrollview 0x7f030025
 int layout perfil_edit 0x7f030026
 int layout perfil_info 0x7f030027
 int layout prob_menu 0x7f030028
-int layout single_item 0x7f030029
-int layout support_simple_spinner_dropdown_item 0x7f03002a
+int layout problem_header 0x7f030029
+int layout single_item 0x7f03002a
+int layout support_simple_spinner_dropdown_item 0x7f03002b
 int menu global 0x7f0d0000
 int menu main 0x7f0d0001
 int menu problems 0x7f0d0002
