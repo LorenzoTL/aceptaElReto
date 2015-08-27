@@ -131,19 +131,7 @@ public class ProbListFragment extends Fragment{
     	adapter.notifyDataSetChanged();
 		
     }
-/*
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-    	aux = (String) adapter.getItem(position);
-    	adapter.clear();
-    	path.cleanQuery();
-    	task = new MyAsyncTask(getActivity(),"GETting data...",view,position);
-    	task.execute(ids.get(position));
-    	
-
-    }
-    */ 
 private class MyAsyncTask extends AsyncTask<Integer, Void, CategoryWSType>{
 		
 		private ProgressDialog pDlg = null;

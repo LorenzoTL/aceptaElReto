@@ -16,8 +16,6 @@ import ws.Traductor;
 import ws.WSquery;
 import ws.WSquery.type;
 
-
-
 //import com.example.aceptaelreto.MainActivity;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
@@ -48,6 +46,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -76,8 +75,13 @@ public class PerfilEdit_Fragment extends Fragment{
 	private TextView txtGenero;
 	private TextView txtPais;
 	private TextView txtInstitucion;
-
+	private Button btnEditPhoto;
+	private Button btnActualizar;
 	private NetworkImageView img;
+	private int PICK_IMAGE_REQUEST = 1;
+	private Uri uri;
+    private Boolean envio;
+    private Boolean rdy;
 	
 	private Spinner spinGenero;
 	private Spinner spinPais;
@@ -89,18 +93,12 @@ public class PerfilEdit_Fragment extends Fragment{
 
 	private Bundle token;
 	private static int idUserSearch;
-	private ListView list;
-	private ArrayList<String> probEnv;
-	private ArrayAdapter<String> adaptador;
-	private ArrayList<Info_Envios> info;
-	private ArrayList<Integer> ids = new ArrayList<Integer>();
-	private int countrycode = 0; 
+	private String countrycode; 
 	
-    public static PerfilEdit_Fragment newInstance(int sectionNumber, String tk, int id) {
+    public static PerfilEdit_Fragment newInstance(int id, String tk) {
     	PerfilEdit_Fragment fragment = new PerfilEdit_Fragment();
         idUserSearch = id;
         Bundle args = new Bundle();
-        args.putInt(ARG_SECTION_NUMBER, sectionNumber);
         args.putString("TOKEN", tk);
         args.putInt("IdUserSearch", id);
         fragment.setArguments(args);
@@ -117,8 +115,8 @@ public class PerfilEdit_Fragment extends Fragment{
                              Bundle savedInstanceState) {
 
 		token = this.getArguments();
-		probEnv = new ArrayList<String>();
-		info =new ArrayList<Info_Envios>();
+		envio = false; 
+		rdy = false;
 		
 		View rootView = inflater.inflate(R.layout.perfil_edit, container, false);
 		
@@ -132,6 +130,8 @@ public class PerfilEdit_Fragment extends Fragment{
         txtCorreo = (TextView)rootView.findViewById(R.id.txtCorreo);
         img = (NetworkImageView)rootView.findViewById(R.id.avatar);
         
+        //Spinners
+        
 		spinGenero = (Spinner)rootView.findViewById(R.id.spinGenero);
 		spinPais = (Spinner)rootView.findViewById(R.id.spinPais);
 		spinInstitucion = (Spinner)rootView.findViewById(R.id.spinInstitucion);
@@ -143,11 +143,17 @@ public class PerfilEdit_Fragment extends Fragment{
 		ArrayAdapter<String> adapter1 = new ArrayAdapter<String>(getActivity(),android.R.layout.simple_spinner_item, paislist);   
 	    adapter1.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 	    spinPais.setAdapter(adapter1);
+	    
+	    //Caso Spinner País -> Actualiza Spinner Institución
 	    spinPais.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 	    	
 	    	@Override
             public void onItemSelected(AdapterView<?> arg0, View arg1,int arg2, long arg3) {
-	    		countrycode = (int) spinPais.getSelectedItemId();
+	    		int code = (int) spinPais.getSelectedItemId();
+	    		countrycode = paiscode.get(code);
+	    		rdy = true;
+	    		MyAsyncTask task = new MyAsyncTask(getActivity(),"GETting data...");
+				task.execute();
             }
 
 			@Override
@@ -160,8 +166,33 @@ public class PerfilEdit_Fragment extends Fragment{
 	    ArrayAdapter<String> adapter2 = new ArrayAdapter<String>(getActivity(),android.R.layout.simple_spinner_item, instlist);   
 	    adapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 	    spinInstitucion.setAdapter(adapter2);
-		
-		
+
+	    //Botones
+	    
+	    btnEditPhoto = (Button)rootView.findViewById(R.id.btnEditPhoto);
+		btnEditPhoto.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent();
+				// Show only images, no videos or anything else
+				intent.setType("image/*");
+				intent.setAction(Intent.ACTION_GET_CONTENT);
+				// Always show the chooser (if there are multiple options available)
+				startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST);
+			}
+		});
+	    
+	    btnActualizar = (Button)rootView.findViewById(R.id.btnActualizar);
+	    btnActualizar.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				envio = true;
+				MyAsyncTask task = new MyAsyncTask(getActivity(),"GETting data...");
+				task.execute();	
+			}
+		});
+	    
+	    //Llamada por default
 	    MyAsyncTask task = new MyAsyncTask(getActivity(),"GETting data...");
 		task.execute();	
 
@@ -176,17 +207,19 @@ public class PerfilEdit_Fragment extends Fragment{
 	                ARG_SECTION_NUMBER));
 	 }
 	
-	public static Drawable LoadImageFromWebOperations(String url) {
-	    try {
-	        InputStream is = (InputStream) new URL(url).getContent();
-	        Drawable d = Drawable.createFromStream(is, "src name");
-	        return d;
-	    } catch (Exception e) {
-	        return null;
-	    }
-	}
+	//Recolecta la información del cambio de foto
+	 
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		 
+		if (requestCode == PICK_IMAGE_REQUEST && data != null && data.getData() != null) {
+		    uri = data.getData();
+		    MyAsyncTask task = new MyAsyncTask(getActivity(),"GETting data...");
+	    	task.execute("imageChange");	
+		}
+	}	 
 	
-	private class MyAsyncTask extends AsyncTask<Boolean, Void, UserWSType>{
+	private class MyAsyncTask extends AsyncTask<String, Void, UserWSType>{
 		
 		private ProgressDialog pDlg = null;
 		private Context mContext = null;
@@ -196,7 +229,6 @@ public class PerfilEdit_Fragment extends Fragment{
 	    private CallerWS ws;
 	    private WSquery path;
 	    private SimpleDateFormat format;
-	    private Boolean envio;
 	    private UserWSType perfil = null;
 	    private ArrayList<CountryWSType> countries = null;
 	    private ArrayList<InstitutionWSType> institutions = null;
@@ -229,65 +261,74 @@ public class PerfilEdit_Fragment extends Fragment{
 	    }
 		
 		@Override
-		protected UserWSType doInBackground(Boolean... params) {
+		protected UserWSType doInBackground(String... params) {
 			
 			
-			// false = mostrar perfil edit - true = enviar cambios
-			envio = params[0];
-			if (envio==false){
-			
-				path.addType(type.currentuser);
-				this.ws.setPath(path);
-				String respuesta = ws.getCall(token.getString("TOKEN"));
-				Traductor tradu = new Traductor(respuesta);
-				try{
-					perfil = tradu.getUser();
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+			// false = mostrar perfil edit / true = enviar cambios			
+			if (!envio){
+				if (params[0].equals("imageChange")){
+					path.cleanQuery();
+					path.addType(type.user);
+					path.addID(idUserSearch);
+					path.addType(type.avatar);
+					path.addParam("avatar", uri.getPath());
+					ws.setPath(path);
+					String respuesta = ws.postCall(token.getString("TOKEN"));
 				}
-				
-				//Relleno Array Pais e Institución
-				path.cleanQuery();
-				path.addType(type.country);
-				this.ws.setPath(path);
-				respuesta = ws.getCall(token.getString("TOKEN"));
-				tradu = new Traductor(respuesta);
-				try{
-					countries = tradu.getPaises();
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+				else{
+					path.addType(type.currentuser);
+					this.ws.setPath(path);
+					String respuesta = ws.getCall(token.getString("TOKEN"));
+					Traductor tradu = new Traductor(respuesta);
+					try{
+						perfil = tradu.getUser();
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					
+					//Relleno Array País 
+					path.cleanQuery();
+					path.addType(type.country);
+					this.ws.setPath(path);
+					respuesta = ws.getCall(token.getString("TOKEN"));
+					tradu = new Traductor(respuesta);
+					try{
+						countries = tradu.getPaises();
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					
+					for(int i=0;i<countries.size();i++){
+						paislist.add(i, countries.get(i).nombre);
+						paiscode.add(i, countries.get(i).code);
+					}
+					
+					//Relleno Array Institución
+					if(rdy){
+						path.cleanQuery();
+						path.addType(type.institution);
+						path.addType(type.country);
+						path.addFree(countrycode);
+						this.ws.setPath(path);
+						respuesta = ws.getCall(token.getString("TOKEN"));
+						tradu = new Traductor(respuesta);
+						try{
+							institutions = tradu.getInstituciones();
+						} catch (Exception e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						
+						for(int i=0;i<institutions.size();i++){
+							instlist.add(i, institutions.get(i).name);
+						}
+					}
+					requestQueueImagen = Volley.newRequestQueue(getActivity().getApplicationContext());
+					imageLoader = new ImageLoader(requestQueueImagen, new BitmapLRUCache());
+					format = new SimpleDateFormat("dd/MM/yyyy");
 				}
-				
-				for(int i=0;i<countries.size();i++){
-					paislist.add(i, countries.get(i).nombre);
-					paiscode.add(i, countries.get(i).code);
-				}
-				
-				countrycode = (int) spinPais.getSelectedItemId();
-				
-				path.cleanQuery();
-				path.addType(type.institution);
-				path.addType(type.country);
-				path.addFree(paiscode.get(countrycode));
-				this.ws.setPath(path);
-				respuesta = ws.getCall(token.getString("TOKEN"));
-				tradu = new Traductor(respuesta);
-				try{
-					institutions = tradu.getInstituciones();
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				
-				for(int i=0;i<institutions.size();i++){
-					instlist.add(i, institutions.get(i).name);
-				}
-				
-				requestQueueImagen = Volley.newRequestQueue(getActivity().getApplicationContext());
-				imageLoader = new ImageLoader(requestQueueImagen, new BitmapLRUCache());
-				format = new SimpleDateFormat("dd/MM/yyyy");
 			}
 			else{
 				
@@ -310,6 +351,7 @@ public class PerfilEdit_Fragment extends Fragment{
 				path.cleanQuery();
 				
 			}
+			
 			return perfil;
 		}
 		
@@ -325,7 +367,6 @@ public class PerfilEdit_Fragment extends Fragment{
 		    txtPais.setText("País: ");
 		    txtInstitucion.setText("Institución: ");
 		    
-			adaptador.notifyDataSetChanged();
 	    	pDlg.dismiss();
 	    }
 		

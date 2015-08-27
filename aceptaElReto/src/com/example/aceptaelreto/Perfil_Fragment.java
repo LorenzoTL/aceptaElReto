@@ -23,6 +23,8 @@ import ws.WSquery.type;
 
 
 
+
+
 //import com.example.aceptaelreto.MainActivity;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
@@ -36,6 +38,8 @@ import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+
+
 
 
 
@@ -64,6 +68,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -98,8 +103,7 @@ public class Perfil_Fragment extends Fragment{
 	private Bundle token;
 	private static int idUserSearch;
 	private int myId;
-	private int PICK_IMAGE_REQUEST = 1;
-	private Uri uri;
+
 	
 	
 	private ArrayList<String> nameProb = new ArrayList<String>();
@@ -154,19 +158,15 @@ public class Perfil_Fragment extends Fragment{
 		tableEnv.setStretchAllColumns(true);
 		tableEnv.bringToFront();
 		
+		
 		btnEditProfile = (Button)rootView.findViewById(R.id.btnEditProfile);
 		btnEditProfile.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				Intent intent = new Intent();
-				// Show only images, no videos or anything else
-				intent.setType("image/*");
-				intent.setAction(Intent.ACTION_GET_CONTENT);
-				// Always show the chooser (if there are multiple options available)
-				startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST);
+				getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.container,
+						PerfilEdit_Fragment.newInstance(idUserSearch,token.getString("TOKEN"))).addToBackStack(null).commit();
 			}
 		});
-		
 
 	    MyAsyncTask task = new MyAsyncTask(getActivity(),"GETting data...");
 		task.execute("");	
@@ -175,18 +175,6 @@ public class Perfil_Fragment extends Fragment{
         return rootView;
     }
 	
-	@Override
-	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-	 
-	    if (requestCode == PICK_IMAGE_REQUEST && data != null && data.getData() != null) {
-	 
-	        uri = data.getData();
-	        MyAsyncTask task = new MyAsyncTask(getActivity(),"GETting data...");
-			task.execute("imageChange");	
-	        
-			
-	    }
-	}
 	
 	 @Override
 	 public void onAttach(Activity activity) {
@@ -244,38 +232,7 @@ public class Perfil_Fragment extends Fragment{
 		
 		@Override
 		protected UserWSType doInBackground(String... params) {
-			
-			/* prueba post
-			JSONObject json= new JSONObject();
-			path.addParam("name", "JoseLorenzo");
-			//path.addType(type.currentuser);
-			path.addType(type.user);
-			path.addID(42504);
-			path.addType(type.profile);
-			try {
-				json.put("name", "JoseLorenzo");
-			} catch (JSONException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-			path.setJson(json);
-			ws.setPath(path);
-			ws.putCall(token.getString("TOKEN"));
-			
-			path.cleanQuery();
-			
-			//fin prueba*/
-			
-			if (params[0].equals("imageChange")){
-				path.cleanQuery();
-				path.addType(type.user);
-				path.addID(myId);
-				path.addType(type.avatar);
-				path.addParam("avatar", uri.getPath());
-				ws.setPath(path);
-				String respuesta = ws.postCall(token.getString("TOKEN"));
-			}
-			else{
+					
 				String respuesta;
 				Traductor tradu;
 				
@@ -327,7 +284,7 @@ public class Perfil_Fragment extends Fragment{
 				requestQueueImagen = Volley.newRequestQueue(getActivity().getApplicationContext());
 				imageLoader = new ImageLoader(requestQueueImagen, new BitmapLRUCache());
 				format = new SimpleDateFormat("dd/MM/yyyy");
-			}
+			
 			
 			return perfil;
 		}
@@ -378,6 +335,7 @@ public class Perfil_Fragment extends Fragment{
 							}
 						});
 					    TextView c1  = new TextView(mContext);
+					    c1.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18);
 						if (i==0){
 							c1.setText("Problemas"); 
 							c1.setTextColor(resource.getColor(R.color.white));	
@@ -409,6 +367,8 @@ public class Perfil_Fragment extends Fragment{
 					   	
 					    
 					}
+				}else{
+					tableEnv.setVisibility(View.GONE);
 				}
 			}
 			

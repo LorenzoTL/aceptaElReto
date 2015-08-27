@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background"
+    android:background="@color/defaultBackground"
     tools:context="com.example.aceptaelreto.Perfil_Fragment">
     
     <TextView
@@ -24,6 +24,15 @@
         android:layout_centerHorizontal="true"
         android:layout_below="@+id/usuario" />
 	
+    <Button
+        android:id="@+id/btnEditPhoto"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:background="@drawable/ic_action_edit"
+        android:visibility="visible"
+		android:layout_toEndOf="@+id/avatar"
+		android:layout_alignBottom="@+id/avatar" />
+        
     <TextView
         android:id="@+id/txtNick"
         android:layout_width="wrap_content"
@@ -172,5 +181,15 @@
 	        android:layout_height="wrap_content"/>
    
    </LinearLayout> 
+   
+     <Button
+		android:id="@+id/btnActualizar"
+	    style="?android:textAppearanceSmall"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:text="Actualizar Perfil"
+	    android:textStyle="bold" 
+		android:layout_below="@+id/editInstitucion"
+	    android:layout_centerHorizontal="true"/>
 
 </RelativeLayout>
