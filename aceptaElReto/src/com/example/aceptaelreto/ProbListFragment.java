@@ -58,6 +58,8 @@ public class ProbListFragment extends Fragment{
     private int adapOpc;
     private MyAsyncTask task;
     private View header;
+    private boolean first = true;
+    private boolean isProblem;
     
     public static ProbListFragment newInstance(int sectionNumber, String tk) {
     	ProbListFragment fragment = new ProbListFragment();
@@ -77,7 +79,7 @@ public class ProbListFragment extends Fragment{
             Bundle savedInstanceState) {
     	
         View rootView = inflater.inflate(R.layout.lista_prob, container, false);
-        
+        isProblem = false;
         //header = (View)inflater.inflate(R.layout.problem_header,null);
         
         token = this.getArguments();
@@ -94,6 +96,14 @@ public class ProbListFragment extends Fragment{
     	list.setOnItemClickListener(new android.widget.AdapterView.OnItemClickListener() {
         	@Override
         	public void onItemClick(AdapterView<?> parent, View view,int position, long id) {
+        		if (first){
+        			aux  =(String) (list.getItemAtPosition(position));
+        			first = false;
+        		}
+        		if (isProblem){
+        			getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.container,
+    						ProbMenuFragment.newInstance(ids.get(position),token.getString("TOKEN"))).addToBackStack(null).commit();
+        		}
             	adapter.clear();
             	path.cleanQuery();
             	task = new MyAsyncTask(getActivity(),"GETting data...",view,position);
@@ -180,14 +190,21 @@ private class MyAsyncTask extends AsyncTask<Integer, Void, CategoryWSType>{
 	    	
 	    	if (click != 0){
 	    		
-	    		if (aux=="Volúmenes") path.addType(type.volume);
-		    	else{
+	    		if (aux=="Volúmenes"){
+	    			path.addType(type.volume);
+	    			if (click>1){
+			    		path.addID(click);
+		    			path.addNumSubCat(1);
+			    	}
+	    		}
+		    	if (aux=="Categorías"){
 		    		path.addType(type.cat);
-		    		if (click > 45){	
-		        		path.addID(click);
-		            	path.addNumSubCat(1);
-		        	}
+		    		if (click>45){
+			    		path.addID(click);
+		    			path.addNumSubCat(1);
+			    	}
 		    	}
+	    		
 	    		
 	    		ws.setPath(path);
 	    		String respuesta = ws.getCall(token.getString("TOKEN"));
@@ -209,10 +226,19 @@ private class MyAsyncTask extends AsyncTask<Integer, Void, CategoryWSType>{
 	    		//Caso lista de problemas
 	    		
 	    		if (arrayCat == null){
+	    			isProblem = true;
 	    			path.cleanQuery();
-	    			path.addType(type.cat);
-	    			path.addID(click);
-	    			path.addType(type.allproblems);
+	    			if (aux=="Volúmenes"){
+	    				path.addType(type.volume);
+	    				path.addID(click);
+		    			path.addType(type.problems);
+	    			}
+	    			else{
+	    				path.addType(type.cat);
+	    				path.addID(click);
+		    			path.addType(type.allproblems);
+	    			}
+	    	
 	    			ws.setPath(path);
 	    	    	respuesta = ws.getCall(token.getString("TOKEN"));
 	    			tradu = new Traductor(respuesta);
@@ -228,6 +254,7 @@ private class MyAsyncTask extends AsyncTask<Integer, Void, CategoryWSType>{
 	    	    	
 	    	    	for(int i=0;i<listProb.size();i++){
 	    	    		etiq.add(listProb.get(i).title);
+	    	    		ids.add(i, listProb.get(i).num);
 	    	    	}	
 	    	    	
 

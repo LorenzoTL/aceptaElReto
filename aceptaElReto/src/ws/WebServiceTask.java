@@ -163,7 +163,7 @@ public class WebServiceTask  {
                 int executeCount = 0;
     			do
     			{
-    				pDlg.setMessage("Logging in.. ("+(executeCount+1)+"/5)");
+    				//pDlg.setMessage("Logging in.. ("+(executeCount+1)+"/5)");
     				// Execute HTTP Post Request
     				executeCount++;
     				response = httpclient.execute(httppost,localContext);

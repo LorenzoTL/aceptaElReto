@@ -1,9 +1,11 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content">
+
+<RelativeLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background"
-    tools:context="com.example.aceptaelreto.Perfil_Fragment">
+    android:background="@color/defaultBackground">
     
     
     <TextView
@@ -116,23 +118,29 @@
         android:text="Problemas Enviados:"
         android:textColor="@color/black" />
     
-    <ListView 
-        android:id="@+id/listProbEnv"
+    <TableLayout 
+        android:id="@+id/tableE"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/probEnvios"
-        android:layout_centerHorizontal="true"/>
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginBottom="10dp"
+        android:divider="?android:attr/dividerHorizontal"
+		android:showDividers="middle"
+        android:layout_below="@+id/probEnvios"/>
     
     <TextView
         android:id="@+id/noEnvios"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" 
-        android:layout_below="@+id/probEnvios"
+        android:layout_below="@+id/tableE"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="5dp"
         android:textSize="18sp"
         android:text="No hay envíos"
         android:textColor="@color/black"/>
 	
     
 </RelativeLayout>
+</ScrollView>

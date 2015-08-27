@@ -227,7 +227,7 @@ public class Traductor {
 		try {
 			jsonobject = new JSONObject(this.JSON);
 			//ponemos country ya que el obj tiene un campo que es la lista de elems llamado country.
-			jsonArray = jsonobject.getJSONArray("country");
+			jsonArray = jsonobject.getJSONArray("countries");
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -237,6 +237,24 @@ public class Traductor {
     	Type listType = new TypeToken<List<CountryWSType>>(){}.getType();
     	List<CountryWSType> List = new Gson().fromJson(jsonArray.toString(), listType);
     	return (ArrayList<CountryWSType>) List;
+	}
+	
+	public ArrayList<InstitutionWSType> getInstituciones(){
+		JSONObject jsonobject;
+    	JSONArray jsonArray = null;
+		try {
+			jsonobject = new JSONObject(this.JSON);
+			//ponemos country ya que el obj tiene un campo que es la lista de elems llamado country.
+			jsonArray = jsonobject.getJSONArray("institutions");
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+    	//then get the type for list and parse using gson as
+    	Type listType = new TypeToken<List<InstitutionWSType>>(){}.getType();
+    	List<InstitutionWSType> List = new Gson().fromJson(jsonArray.toString(), listType);
+    	return (ArrayList<InstitutionWSType>) List;
 	}
 	
 	public ArrayList<ProblemDetailsList> getListasDetalles(){

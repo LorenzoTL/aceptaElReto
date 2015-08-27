@@ -32,6 +32,7 @@ public class WSquery {
 	private JSONObject json;
 	public enum type{
 		allproblems,
+		avatar,
 		best,
 		cat,
 		code,
@@ -44,6 +45,7 @@ public class WSquery {
 		problem,
 		profile,
 		ranking,
+		submission,
 		submissions,
 		user,
 		volume,

@@ -1,7 +1,6 @@
 package com.example.aceptaelreto;
 
 
-
 import java.io.InputStream;
 import java.net.URL;
 import java.text.SimpleDateFormat;
@@ -15,6 +14,13 @@ import ws.CallerWS;
 import ws.Traductor;
 import ws.WSquery;
 import ws.WSquery.type;
+
+
+
+
+
+
+
 
 
 //import com.example.aceptaelreto.MainActivity;
@@ -34,6 +40,15 @@ import com.android.volley.toolbox.Volley;
 
 
 
+
+
+
+
+
+
+
+
+import Tools.BitmapLRUCache;
 import acr.estructuras.CategoryWSType;
 import acr.estructuras.SubmissionWSType;
 import acr.estructuras.SubmissionsListWSType;
@@ -43,10 +58,13 @@ import android.app.FragmentManager;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -56,6 +74,8 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.TableLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
 
 
@@ -63,7 +83,7 @@ public class Perfil_Fragment extends Fragment{
 	
 	private static final String ARG_SECTION_NUMBER = "section_number";
 	
-    
+	private static UserWSType perfil = null;
 	private TextView txtNick;
 	private TextView txtCorreo;
 	private TextView txtNombreCompleto;
@@ -74,24 +94,35 @@ public class Perfil_Fragment extends Fragment{
 	private TextView noEnvios;
 	private Button btnEditProfile;
 	private NetworkImageView img;
+	private TableLayout tableEnv;
 	private Bundle token;
 	private static int idUserSearch;
-	private ListView list;
-	private ArrayList<String> probEnv;
-	private ArrayAdapter<String> adaptador;
-	private ArrayList<Info_Envios> info;
+	private int myId;
+	private int PICK_IMAGE_REQUEST = 1;
+	private Uri uri;
 	
-	private ArrayList<String> etiq = new ArrayList<String>();
-	private ArrayList<Integer> ids = new ArrayList<Integer>();
+	
+	private ArrayList<String> nameProb = new ArrayList<String>();
+	private ArrayList<Integer> numProb = new ArrayList<Integer>();
 
 	
     public static Perfil_Fragment newInstance(int sectionNumber, String tk, int id) {
         Perfil_Fragment fragment = new Perfil_Fragment();
         idUserSearch = id;
+        perfil = null;
         Bundle args = new Bundle();
         args.putInt(ARG_SECTION_NUMBER, sectionNumber);
         args.putString("TOKEN", tk);
-        args.putInt("IdUserSearch", id);
+        fragment.setArguments(args);
+        return fragment;
+    }
+    
+    public static Perfil_Fragment newInstance(UserWSType user, String tk) {
+        Perfil_Fragment fragment = new Perfil_Fragment();
+        perfil = user;
+        idUserSearch = perfil.id;
+        Bundle args = new Bundle();
+        args.putString("TOKEN", tk);
         fragment.setArguments(args);
         return fragment;
     }
@@ -106,8 +137,6 @@ public class Perfil_Fragment extends Fragment{
                              Bundle savedInstanceState) {
 
 		token = this.getArguments();
-		probEnv = new ArrayList<String>();
-		info =new ArrayList<Info_Envios>();
 		
 		View rootView = inflater.inflate(R.layout.perfil_info, container, false);
 		
@@ -121,27 +150,43 @@ public class Perfil_Fragment extends Fragment{
 		txtInstitucion = (TextView)rootView.findViewById(R.id.txtInstitucion);
 		noEnvios = (TextView)rootView.findViewById(R.id.noEnvios);
 		img = (NetworkImageView)rootView.findViewById(R.id.avatar);
-		list = (ListView)rootView.findViewById(R.id.listProbEnv);
-		adaptador = new MyArrayAdapter(getActivity(),etiq,ids,1);
-		list.setAdapter(adaptador);
+		tableEnv = (TableLayout)rootView.findViewById(R.id.tableE);
+		tableEnv.setStretchAllColumns(true);
+		tableEnv.bringToFront();
 		
 		btnEditProfile = (Button)rootView.findViewById(R.id.btnEditProfile);
-		/*btnEditProfile.setOnClickListener(new OnClickListener() {
+		btnEditProfile.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				Intent intent = new Intent(getActivity(), EditInfoActivity.class);
-				intent.putExtra("WALKER", walker);
-				startActivityForResult(intent, Constants.RESULT_EDIT);
+				Intent intent = new Intent();
+				// Show only images, no videos or anything else
+				intent.setType("image/*");
+				intent.setAction(Intent.ACTION_GET_CONTENT);
+				// Always show the chooser (if there are multiple options available)
+				startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST);
 			}
 		});
-		*/
+		
 
 	    MyAsyncTask task = new MyAsyncTask(getActivity(),"GETting data...");
-		task.execute();	
+		task.execute("");	
 
 		
         return rootView;
     }
+	
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+	 
+	    if (requestCode == PICK_IMAGE_REQUEST && data != null && data.getData() != null) {
+	 
+	        uri = data.getData();
+	        MyAsyncTask task = new MyAsyncTask(getActivity(),"GETting data...");
+			task.execute("imageChange");	
+	        
+			
+	    }
+	}
 	
 	 @Override
 	 public void onAttach(Activity activity) {
@@ -170,8 +215,6 @@ public class Perfil_Fragment extends Fragment{
 	    private CallerWS ws;
 	    private WSquery path;
 	    private SimpleDateFormat format;
-	    private String[] estrucType;
-	    private UserWSType perfil = null;
 	    private SubmissionsListWSType subs = null;
 	    private ArrayList<SubmissionWSType> sublist;
 	    
@@ -202,7 +245,7 @@ public class Perfil_Fragment extends Fragment{
 		@Override
 		protected UserWSType doInBackground(String... params) {
 			
-			// prueba post
+			/* prueba post
 			JSONObject json= new JSONObject();
 			path.addParam("name", "JoseLorenzo");
 			//path.addType(type.currentuser);
@@ -221,85 +264,154 @@ public class Perfil_Fragment extends Fragment{
 			
 			path.cleanQuery();
 			
-			//fin prueba
+			//fin prueba*/
 			
-			estrucType = params;
-			if (idUserSearch != 0){
+			if (params[0].equals("imageChange")){
+				path.cleanQuery();
 				path.addType(type.user);
-				path.addID(idUserSearch);
+				path.addID(myId);
+				path.addType(type.avatar);
+				path.addParam("avatar", uri.getPath());
+				ws.setPath(path);
+				String respuesta = ws.postCall(token.getString("TOKEN"));
 			}
 			else{
-				path.addType(type.currentuser);
-			}
-		    this.ws.setPath(path);
-			String respuesta = ws.getCall(token.getString("TOKEN"));
-			Traductor tradu = new Traductor(respuesta);
-			try{
-				perfil = tradu.getUser();
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
-			//submission WS
-			path.addType(type.submissions);
-			this.ws.setPath(path);
-			respuesta = ws.getCall(token.getString("TOKEN"));
-			tradu = new Traductor(respuesta);
-			try{
-				subs = tradu.getSubmissionList();
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			sublist = (ArrayList<SubmissionWSType>) subs.submissionlist;
-			if (sublist != null){
-				SubmissionWSType aux = null;
-				for (int i=0;i<sublist.size();i++){
-					aux = sublist.get(i);
-	    			etiq.add(aux.problem.title);
-	    			ids.add(i, aux.problem.num);
-					
+				String respuesta;
+				Traductor tradu;
+				
+				if(perfil==null){
+					path.cleanQuery();
+					if (idUserSearch != 0){
+						path.addType(type.user);
+						path.addID(idUserSearch);
+					}
+					else{
+						path.addType(type.currentuser);
+					}
+				    this.ws.setPath(path);
+					respuesta = ws.getCall(token.getString("TOKEN"));
+					tradu = new Traductor(respuesta);
+					try{
+						perfil = tradu.getUser();
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 				}
+				
+				//submission WS
+				path.cleanQuery();
+				path.addType(type.user);
+				path.addID(perfil.id);
+				path.addType(type.submissions);
+				this.ws.setPath(path);
+				respuesta = ws.getCall(token.getString("TOKEN"));
+				tradu = new Traductor(respuesta);
+				try{
+					subs = tradu.getSubmissionList();
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				sublist = (ArrayList<SubmissionWSType>) subs.submissionlist;
+				if (sublist != null){
+					SubmissionWSType aux = null;
+					for (int i=0;i<sublist.size();i++){
+						aux = sublist.get(i);
+						nameProb.add(i, aux.problem.title);
+						numProb.add(i, aux.problem.num);
+						
+					}
+				}
+				
+				requestQueueImagen = Volley.newRequestQueue(getActivity().getApplicationContext());
+				imageLoader = new ImageLoader(requestQueueImagen, new BitmapLRUCache());
+				format = new SimpleDateFormat("dd/MM/yyyy");
 			}
 			
-
-			requestQueueImagen = Volley.newRequestQueue(getActivity().getApplicationContext());
-			imageLoader = new ImageLoader(requestQueueImagen, new BitmapLRUCache());
-			format = new SimpleDateFormat("dd/MM/yyyy");
 			return perfil;
 		}
 		
 		@Override
 	    protected void onPostExecute(UserWSType perfil) { 
 	    	
-			if (perfil.email == null){
-		    	txtNacimiento.setVisibility(View.GONE);
-		    	txtCorreo.setVisibility(View.GONE);
-		    	txtGenero.setVisibility(View.GONE);
-		    	btnEditProfile.setVisibility(View.GONE);
-		    	img.setImageUrl(perfil.avatar, imageLoader);
-		    	txtNick.setText("Nick: "+perfil.nick);	
-		    	txtNombreCompleto.setText("Nombre: "+perfil.name);
-		    	txtPais.setText("País: "+perfil.country.name);
-		    	txtInstitucion.setText("Institución: "+perfil.institution.name);
-		    }else{
-		    	Date date = perfil.birthday;
-		    	String nac = format.format(date);		
-		    	txtNacimiento.setText("Fecha de Nacimiento: "+nac);
-		    	img.setImageUrl(perfil.avatar, imageLoader); 	
-		    	txtCorreo.setText("Correo: "+perfil.email);
-		    	txtNick.setText("Nick: "+perfil.nick);	
-		    	txtNombreCompleto.setText("Nombre: "+perfil.name);
-		    	txtGenero.setText("Genero: "+perfil.gender);
-		    	txtPais.setText("País: "+perfil.country.name);
-		    	txtInstitucion.setText("Institución: "+perfil.institution.name);
-		    }
+			if(perfil !=null){
+				if (perfil.email == null){
+			    	txtNacimiento.setVisibility(View.GONE);
+			    	txtCorreo.setVisibility(View.GONE);
+			    	txtGenero.setVisibility(View.GONE);
+			    	btnEditProfile.setVisibility(View.GONE);
+			    	img.setImageUrl(perfil.avatar, imageLoader);
+			    	txtNick.setText("Nick: "+perfil.nick);	
+			    	txtNombreCompleto.setText("Nombre: "+perfil.name);
+			    	txtPais.setText("País: "+perfil.country.name);
+			    	txtInstitucion.setText("Institución: "+perfil.institution.name);
+			    }else{
+			    	Date date = perfil.birthday;
+			    	String nac = format.format(date);		
+			    	txtNacimiento.setText("Fecha de Nacimiento: "+nac);
+			    	img.setImageUrl(perfil.avatar, imageLoader); 	
+			    	txtCorreo.setText("Correo: "+perfil.email);
+			    	txtNick.setText("Nick: "+perfil.nick);	
+			    	txtNombreCompleto.setText("Nombre: "+perfil.name);
+			    	txtGenero.setText("Genero: "+perfil.gender);
+			    	txtPais.setText("País: "+perfil.country.name);
+			    	txtInstitucion.setText("Institución: "+perfil.institution.name);
+			    	myId = perfil.id;
+			    }
+				
+				if(sublist != null){
+					noEnvios.setVisibility(View.GONE);
+					Resources resource = mContext.getResources();
+					//Tabla últimos Envíos
+					
+					for(int i = 0; i < sublist.size(); i++){
+						TableRow tr =  new TableRow(mContext);
+						final int aux= i;
+						tr.setOnClickListener(new OnClickListener(){
+
+							@Override
+							public void onClick(View v) {
+								if (aux>0) getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.container,
+										  ProbMenuFragment.newInstance(numProb.get(aux-1),token.getString("TOKEN"))).addToBackStack(null).commit();
 			
-			if(sublist != null){
-				noEnvios.setVisibility(View.GONE);
+							}
+						});
+					    TextView c1  = new TextView(mContext);
+						if (i==0){
+							c1.setText("Problemas"); 
+							c1.setTextColor(resource.getColor(R.color.white));	
+							c1.setGravity(Gravity.CENTER);
+							tr.setBackgroundColor(resource.getColor(R.color.background));
+						    tr.addView(c1);
+						    tr.setPadding(1, 1, 1, 1);
+						    tableEnv.addView(tr);
+						}else{
+							if (i==1){
+								c1.setText(Integer.toString(numProb.get(i-1))+"-"+nameProb.get(i-1));
+								c1.setGravity(Gravity.CENTER);	
+							    tr.addView(c1);
+							    tr.setPadding(1, 1, 1, 1);
+							    tableEnv.addView(tr);
+							}
+							else{
+
+								if (!numProb.get(i-2).equals(numProb.get(i-1))){
+									c1.setText(Integer.toString(numProb.get(i-1))+"-"+nameProb.get(i-1));
+									c1.setGravity(Gravity.CENTER);	
+								    tr.addView(c1);
+								    tr.setPadding(1, 1, 1, 1);
+								    tableEnv.addView(tr);
+								}
+							}
+
+						}
+					   	
+					    
+					}
+				}
 			}
-			adaptador.notifyDataSetChanged();
+			
 	    	pDlg.dismiss();
 	    }
 		
